@@ -21,9 +21,7 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import clases.TablaAccionEvento;
-import disenho.Formato;
-import java.text.DecimalFormat;
-import java.text.ParseException;
+
 
 /**
  *
@@ -91,38 +89,33 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
             TablaAccionEvento event = new TablaAccionEvento() {
                 @Override
                 public void onEdit(int row) {
-                    modalCliente c = new modalCliente();
+                    modalAlquiler c = new modalAlquiler();
                     principalMenu.escritorio.add(c);
                     Dimension desktopSize = principalMenu.escritorio.getSize();
                     Dimension FrameSize = c.getSize();
                     c.setLocation((desktopSize.width - FrameSize.width) / 2, (desktopSize.height - FrameSize.height) / 6);
                     c.show();
-                    String documen = tbl_alquiler.getValueAt(row, 3).toString();
-                    String cliente = tbl_alquiler.getValueAt(row, 0).toString();
-                    try {
-                        c.MostrarDatos(documen.replaceAll("\\p{Punct}", ""), "editar", Integer.parseInt(cliente), "actualizar");
-                    } catch (ParseException ex) {
-                        Logger.getLogger(tablaAlquiler.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    String alquiler = tbl_alquiler.getValueAt(row, 0).toString();
+                    c.MostrarDatos("editar", Integer.parseInt(alquiler), "actualizar");
 
                 }
 
                 @Override
                 public void onView(int row) {
-                    modalCliente c = new modalCliente();
+                    modalAlquiler c = new modalAlquiler();
                     principalMenu.escritorio.add(c);
                     Dimension desktopSize = principalMenu.escritorio.getSize();
                     Dimension FrameSize = c.getSize();
                     c.setLocation((desktopSize.width - FrameSize.width) / 2, (desktopSize.height - FrameSize.height) / 6);
                     c.show();
-                    String documen = tbl_alquiler.getValueAt(row, 3).toString();
-                    String cliente = tbl_alquiler.getValueAt(row, 0).toString();
-                    try {
-                        c.MostrarDatos(documen.replaceAll("\\p{Punct}", ""), "ver", Integer.parseInt(cliente), "actualizar");
-                    } catch (ParseException ex) {
-                        Logger.getLogger(tablaAlquiler.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    String alquiler = tbl_alquiler.getValueAt(row, 0).toString();
+                    c.MostrarDatos("ver", Integer.parseInt(alquiler), "actualizar");
 
+                }
+
+                @Override
+                public void onDelete(int row) {
+                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                 }
             };
             tbl_alquiler.getColumnModel().getColumn(6).setCellRenderer(new TablaAccionCeldaRender());
@@ -141,6 +134,46 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, ex);
         }
     }
+    
+    void MostrarMorosos(){
+        
+          DefaultTableModel modelo1 = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 6;
+            }
+        };
+        modelo1.addColumn("Codigo de Alquiler");
+        modelo1.addColumn("Documento Titular");
+        modelo1.addColumn("Titular");
+        modelo1.addColumn("Numero Lote");
+        modelo1.addColumn("Monto Cuota");
+        modelo1.addColumn("Ultimo Vencimiento");
+        modelo1.addColumn("Cant.Cuota Mora");
+        modelo1.addColumn("Monto Total Deuda");
+        tbl_alquiler.setModel(modelo1);
+        String sql = "SELECT * FROM verificar_mora_clientes()";
+       
+        String[] datos = new String[8];
+        try (Connection conn = DatabaseConnector.getConnection();
+                Statement st = conn.createStatement();
+                ResultSet rs = st.executeQuery(sql)) {
+
+            while (rs.next()) {
+                for (int i = 0; i < 8; i++) {
+                    datos[i] = rs.getString(i + 1);
+                }
+                modelo1.addRow(datos);
+            }
+            tbl_alquiler.setModel(modelo1);
+            TablaDesign.configurarTabla(tbl_alquiler, jScrollPane1);
+            searchText1.requestFocus();
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, ex);
+        }
+        
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -155,6 +188,8 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         searchText1 = new disenho.BuscarTexto();
+        contener_nuevo1 = new javax.swing.JPanel();
+        nuevo1 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_alquiler = new javax.swing.JTable();
@@ -257,6 +292,54 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
             .addComponent(searchText1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+        contener_nuevo1.setBackground(new java.awt.Color(80, 90, 100));
+        contener_nuevo1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+
+        nuevo1.setBackground(new java.awt.Color(80, 90, 100));
+        nuevo1.setFont(new java.awt.Font("Roboto Medium", 1, 12)); // NOI18N
+        nuevo1.setForeground(new java.awt.Color(224, 224, 224));
+        nuevo1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/nuevo.png"))); // NOI18N
+        nuevo1.setText("VENCIDOS");
+        nuevo1.setBorder(null);
+        nuevo1.setContentAreaFilled(false);
+        nuevo1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        nuevo1.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                nuevo1FocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                nuevo1FocusLost(evt);
+            }
+        });
+        nuevo1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                nuevo1MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                nuevo1MouseExited(evt);
+            }
+        });
+        nuevo1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nuevo1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout contener_nuevo1Layout = new javax.swing.GroupLayout(contener_nuevo1);
+        contener_nuevo1.setLayout(contener_nuevo1Layout);
+        contener_nuevo1Layout.setHorizontalGroup(
+            contener_nuevo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contener_nuevo1Layout.createSequentialGroup()
+                .addComponent(nuevo1, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        contener_nuevo1Layout.setVerticalGroup(
+            contener_nuevo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contener_nuevo1Layout.createSequentialGroup()
+                .addComponent(nuevo1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 1, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -264,9 +347,11 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(contener_nuevo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(102, 102, 102)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(contener_nuevo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 149, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 131, Short.MAX_VALUE)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -280,6 +365,7 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(12, 12, 12)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(contener_nuevo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(contener_nuevo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -421,9 +507,30 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
         EventoTecladoUtil.permitirMayusculasYNumeros(evt);         // TODO add your handling code here:
     }//GEN-LAST:event_searchText1KeyTyped
 
+    private void nuevo1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nuevo1FocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nuevo1FocusGained
+
+    private void nuevo1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nuevo1FocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nuevo1FocusLost
+
+    private void nuevo1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevo1MouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nuevo1MouseEntered
+
+    private void nuevo1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevo1MouseExited
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nuevo1MouseExited
+
+    private void nuevo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevo1ActionPerformed
+MostrarMorosos();        // TODO add your handling code here:
+    }//GEN-LAST:event_nuevo1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public static javax.swing.JPanel contener_nuevo;
+    public static javax.swing.JPanel contener_nuevo1;
     public static javax.swing.JButton jButton1;
     public static javax.swing.JButton jButton2;
     public static javax.swing.JLabel jLabel1;
@@ -433,6 +540,7 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
     public static javax.swing.JPanel jPanel3;
     public static javax.swing.JScrollPane jScrollPane1;
     public static javax.swing.JButton nuevo;
+    public static javax.swing.JButton nuevo1;
     public static disenho.BuscarTexto searchText1;
     public static javax.swing.JTable tbl_alquiler;
     // End of variables declaration//GEN-END:variables

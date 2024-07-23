@@ -103,6 +103,11 @@ public final class tablaLote extends javax.swing.JInternalFrame {
                     c.MostrarDatos("ver", Integer.parseInt(lote), "actualizar");
 
                 }
+
+                @Override
+                public void onDelete(int row) {
+                    
+                }
             };
             tbl_lote.getColumnModel().getColumn(5).setCellRenderer(new TablaAccionCeldaRender());
             tbl_lote.getColumnModel().getColumn(5).setCellEditor(new TablaAccionCeldaEditar(event));

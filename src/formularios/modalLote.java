@@ -169,8 +169,6 @@ public final class modalLote extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         panelModalCliente = new javax.swing.JPanel();
-        contener_guardar = new javax.swing.JPanel();
-        btnGuardar = new javax.swing.JButton();
         contener_cancelar = new javax.swing.JPanel();
         btnCancelar = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
@@ -193,6 +191,8 @@ public final class modalLote extends javax.swing.JInternalFrame {
         jLabel11 = new javax.swing.JLabel();
         serie = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
+        contener_guardar = new javax.swing.JPanel();
+        btnGuardar = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -201,54 +201,6 @@ public final class modalLote extends javax.swing.JInternalFrame {
 
         panelModalCliente.setBackground(new java.awt.Color(255, 255, 255));
         panelModalCliente.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        contener_guardar.setBackground(new java.awt.Color(80, 90, 100));
-
-        btnGuardar.setBackground(new java.awt.Color(153, 204, 255));
-        btnGuardar.setFont(new java.awt.Font("Roboto Medium", 1, 12)); // NOI18N
-        btnGuardar.setForeground(new java.awt.Color(255, 255, 255));
-        btnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/save.png"))); // NOI18N
-        btnGuardar.setText("GUARDAR");
-        btnGuardar.setToolTipText("");
-        btnGuardar.setBorder(null);
-        btnGuardar.setContentAreaFilled(false);
-        btnGuardar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnGuardar.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                btnGuardarFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                btnGuardarFocusLost(evt);
-            }
-        });
-        btnGuardar.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnGuardarMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnGuardarMouseExited(evt);
-            }
-        });
-        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGuardarActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout contener_guardarLayout = new javax.swing.GroupLayout(contener_guardar);
-        contener_guardar.setLayout(contener_guardarLayout);
-        contener_guardarLayout.setHorizontalGroup(
-            contener_guardarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(contener_guardarLayout.createSequentialGroup()
-                .addComponent(btnGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
-        );
-        contener_guardarLayout.setVerticalGroup(
-            contener_guardarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
-        );
-
-        panelModalCliente.add(contener_guardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, -1, -1));
 
         contener_cancelar.setBackground(new java.awt.Color(80, 90, 100));
 
@@ -297,7 +249,7 @@ public final class modalLote extends javax.swing.JInternalFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        panelModalCliente.add(contener_cancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 260, 110, -1));
+        panelModalCliente.add(contener_cancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 260, 110, -1));
 
         jLabel3.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
         jLabel3.setText("Codigo Lote:");
@@ -524,6 +476,55 @@ public final class modalLote extends javax.swing.JInternalFrame {
         jLabel12.setText("Manzana:");
         panelModalCliente.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, 110, 34));
 
+        contener_guardar.setBackground(new java.awt.Color(80, 90, 100));
+
+        btnGuardar.setBackground(new java.awt.Color(153, 204, 255));
+        btnGuardar.setFont(new java.awt.Font("Roboto Medium", 1, 12)); // NOI18N
+        btnGuardar.setForeground(new java.awt.Color(255, 255, 255));
+        btnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/save.png"))); // NOI18N
+        btnGuardar.setText("GUARDAR");
+        btnGuardar.setBorder(null);
+        btnGuardar.setContentAreaFilled(false);
+        btnGuardar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnGuardar.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                btnGuardarFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                btnGuardarFocusLost(evt);
+            }
+        });
+        btnGuardar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnGuardarMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnGuardarMouseExited(evt);
+            }
+        });
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout contener_guardarLayout = new javax.swing.GroupLayout(contener_guardar);
+        contener_guardar.setLayout(contener_guardarLayout);
+        contener_guardarLayout.setHorizontalGroup(
+            contener_guardarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contener_guardarLayout.createSequentialGroup()
+                .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        contener_guardarLayout.setVerticalGroup(
+            contener_guardarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contener_guardarLayout.createSequentialGroup()
+                .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        panelModalCliente.add(contener_guardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 110, -1));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -532,28 +533,11 @@ public final class modalLote extends javax.swing.JInternalFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelModalCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+            .addComponent(panelModalCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnGuardarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGuardarMouseEntered
-        contener_guardar.setBackground(new Color(51, 51, 51));         // TODO add your handling code here:
-    }//GEN-LAST:event_btnGuardarMouseEntered
-
-    private void btnGuardarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGuardarMouseExited
-        contener_guardar.setBackground(new Color(80, 90, 100));
-    }//GEN-LAST:event_btnGuardarMouseExited
-
-    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        if (Formato.verificarCampos(getContentPane()) == true) {
-            GrabarDatos();
-        } else {
-            JOptionPane.showMessageDialog(this, "Debe ingresar todos los campos", "Aviso", JOptionPane.INFORMATION_MESSAGE);
-        }
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnCancelarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCancelarMouseEntered
         contener_cancelar.setBackground(new Color(51, 51, 51));            // TODO add your handling code here:
@@ -567,14 +551,6 @@ public final class modalLote extends javax.swing.JInternalFrame {
         Formato.limpiarCampos(getContentPane());
         Formato.habilitarCampos(getContentPane(), true);
     }//GEN-LAST:event_btnCancelarActionPerformed
-
-    private void btnGuardarFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnGuardarFocusGained
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnGuardarFocusGained
-
-    private void btnGuardarFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnGuardarFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnGuardarFocusLost
 
     private void btnCancelarFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnCancelarFocusGained
 
@@ -705,6 +681,30 @@ public final class modalLote extends javax.swing.JInternalFrame {
     private void serieKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_serieKeyTyped
         EventoTecladoUtil.convertirAMayusculas(evt);        // TODO add your handling code here:
     }//GEN-LAST:event_serieKeyTyped
+
+    private void btnGuardarFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnGuardarFocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnGuardarFocusGained
+
+    private void btnGuardarFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnGuardarFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnGuardarFocusLost
+
+    private void btnGuardarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGuardarMouseEntered
+        contener_guardar.setBackground(new Color(51, 51, 51));         // TODO add your handling code here:
+    }//GEN-LAST:event_btnGuardarMouseEntered
+
+    private void btnGuardarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGuardarMouseExited
+        contener_guardar.setBackground(new Color(80, 90, 100));        // TODO add your handling code here:
+    }//GEN-LAST:event_btnGuardarMouseExited
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+         if (Formato.verificarCampos(getContentPane()) == true) {
+            GrabarDatos();
+        } else {
+            JOptionPane.showMessageDialog(this, "Debe ingresar todos los campos", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        }       // TODO add your handling code here:
+    }//GEN-LAST:event_btnGuardarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

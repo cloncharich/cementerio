@@ -1,10 +1,9 @@
 package disenho;
 
 import com.sun.imageio.plugins.common.ImageUtil;
+import com.toedter.calendar.JDateChooser;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
@@ -14,7 +13,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 import javax.swing.text.NumberFormatter;
@@ -71,15 +69,14 @@ public class Formato {
 
         field.setFormatterFactory(new DefaultFormatterFactory(formatter));
 
-        field.addFocusListener(new FocusAdapter() {
+        /* field.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
                 SwingUtilities.invokeLater(() -> {
                     field.setValue(null);
                 });
             }
-        });
-
+        });*/
     }
 
     public static void limpiarCampos(Container container) {
@@ -128,6 +125,9 @@ public class Formato {
             } else if (comp instanceof JComboBox) {
                 JComboBox<?> comboBox = (JComboBox<?>) comp;
                 comboBox.setEnabled(habilitar);
+            } else if (comp instanceof JDateChooser) {
+                JDateChooser dateChooser = (JDateChooser) comp;
+                dateChooser.setEnabled(habilitar);
             } else if (comp instanceof Container) {
                 habilitarCampos((Container) comp, habilitar);
             }

@@ -5,11 +5,21 @@ import clases.DatabaseManager;
 import clases.EventoTecladoUtil;
 import disenho.Formato;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 /**
@@ -19,105 +29,208 @@ import javax.swing.SwingUtilities;
 public final class modalAlquiler extends javax.swing.JInternalFrame {
 
     String accionBoton = "insertar";
-    int codi_lote = 0;
+    int cod_alquiler = 0;
 
     public modalAlquiler() {
         initComponents();
         ((javax.swing.plaf.basic.BasicInternalFrameUI) this.getUI()).setNorthPane(null);
         setResizable(false);
-        codigo_cliente.setEditable(false);
+        titular.setEditable(false);
+        lote_cod.setEditable(false);
+
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                dimension.requestFocusInWindow();
+                documento_titular.requestFocusInWindow();
+            }
+        });
+
+        documento_titular.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                Formato.NomenclaturaNumero(documento_titular);
+                
+            }
+        });
+
+        monto_cuota.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                Formato.NomenclaturaNumero(monto_cuota);
+               
+            }
+        });
+
+        monto_entrega.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                Formato.NomenclaturaNumero(monto_entrega);
+                
             }
         });
 
     }
 
-    
+    private void BuscarTitular(String valor) {
+        String query = "select TO_CHAR(CAST(documento AS numeric), 'FM999G999G999G990') AS documento,"
+                + "CONCAT(cod_cliente,'-',nombres, ' ', apellidos) AS cliente_nombre from cliente\n"
+                + "where documento='" + valor + "';";
+        int contador = 0;
+
+        Statement st1;
+        try (Connection conn = DatabaseConnector.getConnection();
+                Statement st = conn.createStatement();
+                ResultSet rs = st.executeQuery(query)) {
+            while (rs.next()) {
+                documento_titular.setText(rs.getString(1));
+                titular.setText(rs.getString(2));
+                contador = contador + 1;
+            }
+            if ((contador == 0) && (!documento_titular.getText().trim().isEmpty())) {
+                JOptionPane.showMessageDialog(this, "El numero de documento ingresado no existe en la base de datos", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, ex);
+        }
+    }
+
+    private void GrabarDatos() {
+        //  tabla en base alquiler_lote_cliente
+        try {
+            String queryInsert = "INSERT INTO public.alquiler_lote_cliente(\n"
+                    + "	cod_cliente, estado_registro,entrega, cuota, cod_lote, fecha_vencimiento)\n"
+                    + "	VALUES (?, ?, ?, ?, ?, ?);";
+
+            String queryUpdate = "UPDATE public.alquiler_lote_cliente\n"
+                    + "	SET  cod_cliente=?, entrega=?, cuota=?, cod_lote=?, fecha_vencimiento=?\n"
+                    + "	WHERE cod_cabecera=?;";
+
+            String cli = titular.getText();
+            int indexCli = cli.indexOf('-');
+            if (indexCli != -1) {
+                cli = cli.substring(0, indexCli); // campo cod_cliente
+            }
+            String ent = monto_entrega.getText().replaceAll("\\p{Punct}", "");//campo entrega
+            String cuo = monto_cuota.getText().replaceAll("\\p{Punct}", ""); // campo cuota
+            String lot = lote_cod.getText();
+            int indexLote = lot.indexOf(')');
+            if (indexLote != -1) {
+                lot = lot.substring(0, indexLote); // campo cod_lote
+            }
+
+            DateFormat dateFormat = new SimpleDateFormat("yyy-MM-dd");
+            String fecha_ven = dateFormat.format(fecha_venci.getDate());
+            java.sql.Date fec = java.sql.Date.valueOf(fecha_ven);
+
+            int rowsAffected = 0;
+            if ("insertar".equalsIgnoreCase(accionBoton)) {
+                rowsAffected = DatabaseManager.insert(queryInsert, Integer.parseInt(cli), "A", Integer.parseInt(ent), Integer.parseInt(cuo), Integer.parseInt(lot), fec);
+            } else if ("actualizar".equalsIgnoreCase(accionBoton)) {
+                rowsAffected = DatabaseManager.update(queryUpdate, Integer.parseInt(cli), Integer.parseInt(ent), Integer.parseInt(cuo), Integer.parseInt(lot), fec, cod_alquiler);
+            }
+
+            if (rowsAffected > 0) {
+                if ("insertar".equalsIgnoreCase(accionBoton)) {
+                    JOptionPane.showMessageDialog(this, "Lote registrado con exito", "AVISO", JOptionPane.PLAIN_MESSAGE, Formato.icono("/imagenes/check.png", 40, 40));
+                } else if ("actualizar".equalsIgnoreCase(accionBoton)) {
+                    JOptionPane.showMessageDialog(this, "Datos actualizado con exito", "AVISO", JOptionPane.PLAIN_MESSAGE, Formato.icono("/imagenes/check.png", 40, 40));
+                }
+                dispose();
+                tablaAlquiler.mostrarTabla("");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(modalAlquiler.this, e.getMessage(), "Error al grabar/actualizar registro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void MostrarDatos(String opcion, int id, String accion) {
+        cod_alquiler = id;
+        accionBoton = accion;
+        String query = "SELECT t.documento,CONCAT(t.cod_cliente,'-',t.nombres, ' ', t.apellidos) AS cliente_nombre,\n"
+                + "CONCAT(l.cod_lote,') ',m.codigo, '-', l.numero_lote, '-', l.serie) AS lote_numero,\n"
+                + "a.entrega,\n"
+                + "a.cuota,\n"
+                + "TO_CHAR(a.fecha_vencimiento, 'DD/MM/YYYY') AS fecha_vencimiento\n"
+                + "FROM alquiler_lote_cliente AS a\n"
+                + "INNER JOIN cliente AS t ON t.cod_cliente = a.cod_cliente\n"
+                + "INNER JOIN lote AS l ON l.cod_lote = a.cod_lote\n"
+                + "INNER JOIN manzana AS m ON m.cod_manzana = l.cod_manzana \n"
+                + "where a.cod_cabecera =" + cod_alquiler + "";
+        try (Connection conn = DatabaseConnector.getConnection();
+                Statement st = conn.createStatement();
+                ResultSet rs = st.executeQuery(query)) {
+
+            if (rs.next()) {
+                double doc = Double.parseDouble(rs.getString(1));
+                documento_titular.setValue(doc);
+                titular.setText(rs.getString(2));
+                lote_cod.setText(rs.getString(3));
+                double ent = Double.parseDouble(rs.getString(4));
+                monto_entrega.setValue(ent);
+                double cuo = Double.parseDouble(rs.getString(5));
+                monto_cuota.setValue(cuo);
+                SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+                String fecha =rs.getString(6);
+                Date dato = null;
+                try {
+                    dato = formato.parse(fecha);
+                    fecha_venci.setDate(dato);
+                } catch (ParseException ex) {
+                    Logger.getLogger(modalAlquiler.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                if (opcion.equals("ver")) {
+                    Formato.habilitarCampos(getContentPane(), false);
+                    btnGuardar.setEnabled(false);
+                    btnCancelar.setEnabled(false);
+                    btnBuscarCliente.setEnabled(false);
+                    btnBuscarLote.setEnabled(false);
+
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Error al ejecutar la consulta SQL: " + e.getMessage());
+        }
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         panelModalCliente = new javax.swing.JPanel();
-        contener_guardar = new javax.swing.JPanel();
-        btnGuardar = new javax.swing.JButton();
         contener_cancelar = new javax.swing.JPanel();
         btnCancelar = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         contener_salir = new javax.swing.JPanel();
         salir = new javax.swing.JButton();
-        codigo_cliente = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        dimension = new javax.swing.JTextField();
-        monto_entrega = new javax.swing.JTextField();
+        titular = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         lote_cod = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
-        monto_cuota = new javax.swing.JTextField();
-        fecha_venci1 = new com.toedter.calendar.JDateChooser();
+        fecha_venci = new com.toedter.calendar.JDateChooser();
         jLabel14 = new javax.swing.JLabel();
-        contener_guardar1 = new javax.swing.JPanel();
-        btnGuardar1 = new javax.swing.JButton();
+        monto_cuota = new javax.swing.JFormattedTextField();
+        documento_titular = new javax.swing.JFormattedTextField();
+        monto_entrega = new javax.swing.JFormattedTextField();
+        contener_guardar = new javax.swing.JPanel();
+        btnGuardar = new javax.swing.JButton();
+        contener_buscarCliente = new javax.swing.JPanel();
+        btnBuscarCliente = new javax.swing.JButton();
+        contener_buscarLote = new javax.swing.JPanel();
+        btnBuscarLote = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(javax.swing.BorderFactory.createEtchedBorder());
         setFrameIcon(null);
-        setPreferredSize(new java.awt.Dimension(678, 310));
+        setPreferredSize(new java.awt.Dimension(678, 329));
 
         panelModalCliente.setBackground(new java.awt.Color(255, 255, 255));
         panelModalCliente.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        contener_guardar.setBackground(new java.awt.Color(80, 90, 100));
-
-        btnGuardar.setBackground(new java.awt.Color(153, 204, 255));
-        btnGuardar.setFont(new java.awt.Font("Roboto Medium", 1, 12)); // NOI18N
-        btnGuardar.setForeground(new java.awt.Color(255, 255, 255));
-        btnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/save.png"))); // NOI18N
-        btnGuardar.setText("GUARDAR");
-        btnGuardar.setToolTipText("");
-        btnGuardar.setBorder(null);
-        btnGuardar.setContentAreaFilled(false);
-        btnGuardar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnGuardar.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                btnGuardarFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                btnGuardarFocusLost(evt);
-            }
-        });
-        btnGuardar.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnGuardarMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnGuardarMouseExited(evt);
-            }
-        });
-        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGuardarActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout contener_guardarLayout = new javax.swing.GroupLayout(contener_guardar);
-        contener_guardar.setLayout(contener_guardarLayout);
-        contener_guardarLayout.setHorizontalGroup(
-            contener_guardarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(contener_guardarLayout.createSequentialGroup()
-                .addComponent(btnGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
-        );
-        contener_guardarLayout.setVerticalGroup(
-            contener_guardarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnGuardar, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
-        );
-
-        panelModalCliente.add(contener_guardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, -1, -1));
 
         contener_cancelar.setBackground(new java.awt.Color(80, 90, 100));
 
@@ -166,7 +279,7 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        panelModalCliente.add(contener_cancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 260, 110, -1));
+        panelModalCliente.add(contener_cancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 260, 110, -1));
 
         jLabel3.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
         jLabel3.setText("Documento Titular:");
@@ -215,60 +328,26 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
 
         panelModalCliente.add(contener_salir, new org.netbeans.lib.awtextra.AbsoluteConstraints(636, 0, -1, -1));
 
-        codigo_cliente.setFont(new java.awt.Font("Roboto Light", 0, 12)); // NOI18N
-        codigo_cliente.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        codigo_cliente.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                codigo_clienteActionPerformed(evt);
-            }
-        });
-        codigo_cliente.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                codigo_clienteKeyReleased(evt);
-            }
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                codigo_clienteKeyTyped(evt);
-            }
-        });
-        panelModalCliente.add(codigo_cliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 270, 32));
-
         jLabel5.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
         jLabel5.setText("Titular:");
         panelModalCliente.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 50, 130, 34));
 
-        dimension.setFont(new java.awt.Font("Roboto Light", 0, 12)); // NOI18N
-        dimension.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        dimension.addActionListener(new java.awt.event.ActionListener() {
+        titular.setFont(new java.awt.Font("Roboto Light", 0, 12)); // NOI18N
+        titular.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        titular.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dimensionActionPerformed(evt);
+                titularActionPerformed(evt);
             }
         });
-        dimension.addKeyListener(new java.awt.event.KeyAdapter() {
+        titular.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                dimensionKeyReleased(evt);
+                titularKeyReleased(evt);
             }
             public void keyTyped(java.awt.event.KeyEvent evt) {
-                dimensionKeyTyped(evt);
+                titularKeyTyped(evt);
             }
         });
-        panelModalCliente.add(dimension, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 80, 320, 32));
-
-        monto_entrega.setFont(new java.awt.Font("Roboto Light", 0, 12)); // NOI18N
-        monto_entrega.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        monto_entrega.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                monto_entregaActionPerformed(evt);
-            }
-        });
-        monto_entrega.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                monto_entregaKeyReleased(evt);
-            }
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                monto_entregaKeyTyped(evt);
-            }
-        });
-        panelModalCliente.add(monto_entrega, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 140, 320, 32));
+        panelModalCliente.add(titular, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 80, 320, 32));
 
         jLabel7.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
         jLabel7.setText("Lote:");
@@ -299,82 +378,209 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
         jLabel13.setText("Fecha vencimiento:");
         panelModalCliente.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 170, 130, 34));
 
-        monto_cuota.setFont(new java.awt.Font("Roboto Light", 0, 12)); // NOI18N
-        monto_cuota.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        monto_cuota.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                monto_cuotaActionPerformed(evt);
-            }
-        });
-        monto_cuota.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                monto_cuotaKeyReleased(evt);
-            }
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                monto_cuotaKeyTyped(evt);
-            }
-        });
-        panelModalCliente.add(monto_cuota, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, 320, 32));
-
-        fecha_venci1.setBackground(new java.awt.Color(204, 204, 204));
-        fecha_venci1.setForeground(new java.awt.Color(204, 204, 204));
-        fecha_venci1.addFocusListener(new java.awt.event.FocusAdapter() {
+        fecha_venci.setBackground(new java.awt.Color(204, 204, 204));
+        fecha_venci.setForeground(new java.awt.Color(204, 204, 204));
+        fecha_venci.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
-                fecha_venci1FocusLost(evt);
+                fecha_venciFocusLost(evt);
             }
         });
-        panelModalCliente.add(fecha_venci1, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 200, 320, 32));
+        panelModalCliente.add(fecha_venci, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 200, 320, 32));
 
         jLabel14.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
         jLabel14.setText("Monto cuota:");
         panelModalCliente.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, 130, 34));
 
-        contener_guardar1.setBackground(new java.awt.Color(80, 90, 100));
-
-        btnGuardar1.setBackground(new java.awt.Color(153, 204, 255));
-        btnGuardar1.setFont(new java.awt.Font("Roboto Medium", 1, 12)); // NOI18N
-        btnGuardar1.setForeground(new java.awt.Color(255, 255, 255));
-        btnGuardar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/buscar.png"))); // NOI18N
-        btnGuardar1.setToolTipText("");
-        btnGuardar1.setBorder(null);
-        btnGuardar1.setContentAreaFilled(false);
-        btnGuardar1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnGuardar1.addFocusListener(new java.awt.event.FocusAdapter() {
+        monto_cuota.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        monto_cuota.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
+        monto_cuota.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                btnGuardar1FocusGained(evt);
+                monto_cuotaFocusGained(evt);
+            }
+        });
+        monto_cuota.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                monto_cuotaKeyTyped(evt);
+            }
+        });
+        panelModalCliente.add(monto_cuota, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, 310, 32));
+
+        documento_titular.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        documento_titular.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
+        documento_titular.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                documento_titularFocusGained(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                btnGuardar1FocusLost(evt);
+                documento_titularFocusLost(evt);
             }
         });
-        btnGuardar1.addMouseListener(new java.awt.event.MouseAdapter() {
+        documento_titular.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                documento_titularActionPerformed(evt);
+            }
+        });
+        documento_titular.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                documento_titularKeyTyped(evt);
+            }
+        });
+        panelModalCliente.add(documento_titular, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 270, 32));
+
+        monto_entrega.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        monto_entrega.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
+        monto_entrega.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                monto_entregaFocusGained(evt);
+            }
+        });
+        monto_entrega.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                monto_entregaKeyTyped(evt);
+            }
+        });
+        panelModalCliente.add(monto_entrega, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 140, 320, 32));
+
+        contener_guardar.setBackground(new java.awt.Color(80, 90, 100));
+
+        btnGuardar.setBackground(new java.awt.Color(153, 204, 255));
+        btnGuardar.setFont(new java.awt.Font("Roboto Medium", 1, 12)); // NOI18N
+        btnGuardar.setForeground(new java.awt.Color(255, 255, 255));
+        btnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/save.png"))); // NOI18N
+        btnGuardar.setText("GUARDAR");
+        btnGuardar.setBorder(null);
+        btnGuardar.setContentAreaFilled(false);
+        btnGuardar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnGuardar.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                btnGuardarFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                btnGuardarFocusLost(evt);
+            }
+        });
+        btnGuardar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnGuardar1MouseEntered(evt);
+                btnGuardarMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnGuardar1MouseExited(evt);
+                btnGuardarMouseExited(evt);
             }
         });
-        btnGuardar1.addActionListener(new java.awt.event.ActionListener() {
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGuardar1ActionPerformed(evt);
+                btnGuardarActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout contener_guardar1Layout = new javax.swing.GroupLayout(contener_guardar1);
-        contener_guardar1.setLayout(contener_guardar1Layout);
-        contener_guardar1Layout.setHorizontalGroup(
-            contener_guardar1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(contener_guardar1Layout.createSequentialGroup()
-                .addComponent(btnGuardar1, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
+        javax.swing.GroupLayout contener_guardarLayout = new javax.swing.GroupLayout(contener_guardar);
+        contener_guardar.setLayout(contener_guardarLayout);
+        contener_guardarLayout.setHorizontalGroup(
+            contener_guardarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contener_guardarLayout.createSequentialGroup()
+                .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
-        contener_guardar1Layout.setVerticalGroup(
-            contener_guardar1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnGuardar1, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
+        contener_guardarLayout.setVerticalGroup(
+            contener_guardarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contener_guardarLayout.createSequentialGroup()
+                .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        panelModalCliente.add(contener_guardar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 80, 40, 32));
+        panelModalCliente.add(contener_guardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 110, -1));
+
+        contener_buscarCliente.setBackground(new java.awt.Color(80, 90, 100));
+
+        btnBuscarCliente.setBackground(new java.awt.Color(153, 204, 255));
+        btnBuscarCliente.setFont(new java.awt.Font("Roboto Medium", 1, 12)); // NOI18N
+        btnBuscarCliente.setForeground(new java.awt.Color(255, 255, 255));
+        btnBuscarCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/buscar.png"))); // NOI18N
+        btnBuscarCliente.setBorder(null);
+        btnBuscarCliente.setContentAreaFilled(false);
+        btnBuscarCliente.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnBuscarCliente.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                btnBuscarClienteFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                btnBuscarClienteFocusLost(evt);
+            }
+        });
+        btnBuscarCliente.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnBuscarClienteMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnBuscarClienteMouseExited(evt);
+            }
+        });
+        btnBuscarCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarClienteActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout contener_buscarClienteLayout = new javax.swing.GroupLayout(contener_buscarCliente);
+        contener_buscarCliente.setLayout(contener_buscarClienteLayout);
+        contener_buscarClienteLayout.setHorizontalGroup(
+            contener_buscarClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnBuscarCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
+        );
+        contener_buscarClienteLayout.setVerticalGroup(
+            contener_buscarClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contener_buscarClienteLayout.createSequentialGroup()
+                .addComponent(btnBuscarCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        panelModalCliente.add(contener_buscarCliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 80, 40, -1));
+
+        contener_buscarLote.setBackground(new java.awt.Color(80, 90, 100));
+
+        btnBuscarLote.setBackground(new java.awt.Color(153, 204, 255));
+        btnBuscarLote.setFont(new java.awt.Font("Roboto Medium", 1, 12)); // NOI18N
+        btnBuscarLote.setForeground(new java.awt.Color(255, 255, 255));
+        btnBuscarLote.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/buscar.png"))); // NOI18N
+        btnBuscarLote.setBorder(null);
+        btnBuscarLote.setContentAreaFilled(false);
+        btnBuscarLote.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnBuscarLote.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                btnBuscarLoteFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                btnBuscarLoteFocusLost(evt);
+            }
+        });
+        btnBuscarLote.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnBuscarLoteMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnBuscarLoteMouseExited(evt);
+            }
+        });
+        btnBuscarLote.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarLoteActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout contener_buscarLoteLayout = new javax.swing.GroupLayout(contener_buscarLote);
+        contener_buscarLote.setLayout(contener_buscarLoteLayout);
+        contener_buscarLoteLayout.setHorizontalGroup(
+            contener_buscarLoteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnBuscarLote, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
+        );
+        contener_buscarLoteLayout.setVerticalGroup(
+            contener_buscarLoteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contener_buscarLoteLayout.createSequentialGroup()
+                .addComponent(btnBuscarLote, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        panelModalCliente.add(contener_buscarLote, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 140, 40, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -384,30 +590,11 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(panelModalCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(panelModalCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnGuardarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGuardarMouseEntered
-        contener_guardar.setBackground(new Color(51, 51, 51));         // TODO add your handling code here:
-    }//GEN-LAST:event_btnGuardarMouseEntered
-
-    private void btnGuardarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGuardarMouseExited
-        contener_guardar.setBackground(new Color(80, 90, 100));
-    }//GEN-LAST:event_btnGuardarMouseExited
-
-    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        if (Formato.verificarCampos(getContentPane()) == true) {
-
-        } else {
-            JOptionPane.showMessageDialog(this, "Debe ingresar todos los campos", "Aviso", JOptionPane.INFORMATION_MESSAGE);
-        }
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnCancelarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCancelarMouseEntered
         contener_cancelar.setBackground(new Color(51, 51, 51));            // TODO add your handling code here:
@@ -421,14 +608,6 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
         Formato.limpiarCampos(getContentPane());
         Formato.habilitarCampos(getContentPane(), true);
     }//GEN-LAST:event_btnCancelarActionPerformed
-
-    private void btnGuardarFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnGuardarFocusGained
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnGuardarFocusGained
-
-    private void btnGuardarFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnGuardarFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnGuardarFocusLost
 
     private void btnCancelarFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnCancelarFocusGained
 
@@ -452,41 +631,17 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
         dispose();        // TODO add your handling code here:
     }//GEN-LAST:event_salirActionPerformed
 
-    private void codigo_clienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_codigo_clienteActionPerformed
+    private void titularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_titularActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_codigo_clienteActionPerformed
+    }//GEN-LAST:event_titularActionPerformed
 
-    private void codigo_clienteKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_codigo_clienteKeyReleased
+    private void titularKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_titularKeyReleased
         // TODO add your handling code here:
-    }//GEN-LAST:event_codigo_clienteKeyReleased
+    }//GEN-LAST:event_titularKeyReleased
 
-    private void codigo_clienteKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_codigo_clienteKeyTyped
-        EventoTecladoUtil.permitirMayusculasYNumeros(evt);        // TODO add your handling code here:
-    }//GEN-LAST:event_codigo_clienteKeyTyped
-
-    private void dimensionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dimensionActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_dimensionActionPerformed
-
-    private void dimensionKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dimensionKeyReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_dimensionKeyReleased
-
-    private void dimensionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dimensionKeyTyped
+    private void titularKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_titularKeyTyped
         EventoTecladoUtil.permitirNumerosComasYGuiones(evt);        // TODO add your handling code here:
-    }//GEN-LAST:event_dimensionKeyTyped
-
-    private void monto_entregaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_monto_entregaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_monto_entregaActionPerformed
-
-    private void monto_entregaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_monto_entregaKeyReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_monto_entregaKeyReleased
-
-    private void monto_entregaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_monto_entregaKeyTyped
-        // TODO add your handling code here:
-    }//GEN-LAST:event_monto_entregaKeyTyped
+    }//GEN-LAST:event_titularKeyTyped
 
     private void lote_codActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lote_codActionPerformed
         // TODO add your handling code here:
@@ -500,56 +655,146 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
         EventoTecladoUtil.permitirNumerosComasYGuiones(evt);          // TODO add your handling code here:
     }//GEN-LAST:event_lote_codKeyTyped
 
-    private void monto_cuotaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_monto_cuotaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_monto_cuotaActionPerformed
+    private void fecha_venciFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fecha_venciFocusLost
 
-    private void monto_cuotaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_monto_cuotaKeyReleased
         // TODO add your handling code here:
-    }//GEN-LAST:event_monto_cuotaKeyReleased
+    }//GEN-LAST:event_fecha_venciFocusLost
+
+    private void monto_cuotaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_monto_cuotaFocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_monto_cuotaFocusGained
 
     private void monto_cuotaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_monto_cuotaKeyTyped
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_monto_cuotaKeyTyped
 
-    private void fecha_venci1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fecha_venci1FocusLost
-
+    private void documento_titularFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_documento_titularFocusGained
         // TODO add your handling code here:
-    }//GEN-LAST:event_fecha_venci1FocusLost
+    }//GEN-LAST:event_documento_titularFocusGained
 
-    private void btnGuardar1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnGuardar1FocusGained
+    private void documento_titularKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_documento_titularKeyTyped
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnGuardar1FocusGained
+    }//GEN-LAST:event_documento_titularKeyTyped
 
-    private void btnGuardar1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnGuardar1FocusLost
+    private void monto_entregaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_monto_entregaFocusGained
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnGuardar1FocusLost
+    }//GEN-LAST:event_monto_entregaFocusGained
 
-    private void btnGuardar1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGuardar1MouseEntered
+    private void monto_entregaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_monto_entregaKeyTyped
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnGuardar1MouseEntered
+    }//GEN-LAST:event_monto_entregaKeyTyped
 
-    private void btnGuardar1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGuardar1MouseExited
+    private void btnGuardarFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnGuardarFocusGained
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnGuardar1MouseExited
+    }//GEN-LAST:event_btnGuardarFocusGained
 
-    private void btnGuardar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardar1ActionPerformed
+    private void btnGuardarFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnGuardarFocusLost
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnGuardar1ActionPerformed
+    }//GEN-LAST:event_btnGuardarFocusLost
+
+    private void btnGuardarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGuardarMouseEntered
+        contener_guardar.setBackground(new Color(51, 51, 51));         // TODO add your handling code here:
+    }//GEN-LAST:event_btnGuardarMouseEntered
+
+    private void btnGuardarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGuardarMouseExited
+        contener_guardar.setBackground(new Color(80, 90, 100));        // TODO add your handling code here:
+    }//GEN-LAST:event_btnGuardarMouseExited
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        if (Formato.verificarCampos(getContentPane()) == true) {
+            GrabarDatos();
+        } else {
+            JOptionPane.showMessageDialog(this, "Debe ingresar todos los campos", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnBuscarClienteFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnBuscarClienteFocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnBuscarClienteFocusGained
+
+    private void btnBuscarClienteFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnBuscarClienteFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnBuscarClienteFocusLost
+
+    private void btnBuscarClienteMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBuscarClienteMouseEntered
+        contener_buscarCliente.setBackground(new Color(51, 51, 51));        // TODO add your handling code here:
+    }//GEN-LAST:event_btnBuscarClienteMouseEntered
+
+    private void btnBuscarClienteMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBuscarClienteMouseExited
+        contener_buscarCliente.setBackground(new Color(80, 90, 100));         // TODO add your handling code here:
+    }//GEN-LAST:event_btnBuscarClienteMouseExited
+
+    private void btnBuscarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarClienteActionPerformed
+        JTextField[] tfParam = new JTextField[2];
+        tfParam[0] = documento_titular;
+        tfParam[1] = titular;
+
+        String sql = "select TO_CHAR(CAST(documento AS numeric), 'FM999G999G999G990') AS documento,"
+                + "CONCAT(cod_cliente,'-',nombres, ' ', apellidos) AS cliente_nombre from cliente\n"
+                + "where apellidos like ";
+
+        buscador pp = new buscador(sql, new String[]{"Documento", "Titular"}, 2, tfParam);
+        Dimension desktopSize = principalMenu.escritorio.getSize();
+        Dimension FrameSize = pp.getSize();
+        pp.setLocation((desktopSize.width - FrameSize.width) / 2, (desktopSize.height - FrameSize.height) / 4);
+        pp.setVisible(true);         // TODO add your handling code here:
+    }//GEN-LAST:event_btnBuscarClienteActionPerformed
+
+    private void btnBuscarLoteFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnBuscarLoteFocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnBuscarLoteFocusGained
+
+    private void btnBuscarLoteFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnBuscarLoteFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnBuscarLoteFocusLost
+
+    private void btnBuscarLoteMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBuscarLoteMouseEntered
+        contener_buscarLote.setBackground(new Color(51, 51, 51));          // TODO add your handling code here:
+    }//GEN-LAST:event_btnBuscarLoteMouseEntered
+
+    private void btnBuscarLoteMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBuscarLoteMouseExited
+        contener_buscarLote.setBackground(new Color(80, 90, 100));         // TODO add your handling code here:
+    }//GEN-LAST:event_btnBuscarLoteMouseExited
+
+    private void btnBuscarLoteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarLoteActionPerformed
+        JTextField[] tfParam = new JTextField[1];
+        tfParam[0] = lote_cod;
+
+        String sql = "  select  CONCAT(l.cod_lote,') ',m.codigo, '-', l.numero_lote, '-', l.serie) AS lote_numero\n"
+                + "  from lote as l\n"
+                + "   INNER JOIN manzana AS m ON m.cod_manzana = l.cod_manzana\n"
+                + "   where l.estado_registro='L' and l.numero_lote like";
+
+        buscador pp = new buscador(sql, new String[]{"Lotes Libres"}, 1, tfParam);
+        Dimension desktopSize = principalMenu.escritorio.getSize();
+        Dimension FrameSize = pp.getSize();
+        pp.setLocation((desktopSize.width - FrameSize.width) / 2, (desktopSize.height - FrameSize.height) / 4);
+        pp.setVisible(true);        // TODO add your handling code here:
+    }//GEN-LAST:event_btnBuscarLoteActionPerformed
+
+    private void documento_titularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_documento_titularActionPerformed
+        titular.setText("");
+        BuscarTitular(documento_titular.getText().replaceAll("\\p{Punct}", ""));        // TODO add your handling code here:
+    }//GEN-LAST:event_documento_titularActionPerformed
+
+    private void documento_titularFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_documento_titularFocusLost
+        titular.setText("");
+        BuscarTitular(documento_titular.getText().replaceAll("\\p{Punct}", ""));         // TODO add your handling code here:
+    }//GEN-LAST:event_documento_titularFocusLost
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    public static javax.swing.JButton btnBuscarCliente;
+    public static javax.swing.JButton btnBuscarLote;
     public static javax.swing.JButton btnCancelar;
     public static javax.swing.JButton btnGuardar;
-    public static javax.swing.JButton btnGuardar1;
-    public static javax.swing.JTextField codigo_cliente;
+    public static javax.swing.JPanel contener_buscarCliente;
+    public static javax.swing.JPanel contener_buscarLote;
     public static javax.swing.JPanel contener_cancelar;
     public static javax.swing.JPanel contener_guardar;
-    public static javax.swing.JPanel contener_guardar1;
     public static javax.swing.JPanel contener_salir;
-    public static javax.swing.JTextField dimension;
+    public static javax.swing.JFormattedTextField documento_titular;
     public static com.toedter.calendar.JDateChooser fecha_venci;
-    public static com.toedter.calendar.JDateChooser fecha_venci1;
     public static javax.swing.JLabel jLabel10;
     public static javax.swing.JLabel jLabel13;
     public static javax.swing.JLabel jLabel14;
@@ -558,9 +803,10 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
     public static javax.swing.JLabel jLabel5;
     public static javax.swing.JLabel jLabel7;
     public static javax.swing.JTextField lote_cod;
-    public static javax.swing.JTextField monto_cuota;
-    public static javax.swing.JTextField monto_entrega;
+    public static javax.swing.JFormattedTextField monto_cuota;
+    public static javax.swing.JFormattedTextField monto_entrega;
     public static javax.swing.JPanel panelModalCliente;
     public static javax.swing.JButton salir;
+    public static javax.swing.JTextField titular;
     // End of variables declaration//GEN-END:variables
 }

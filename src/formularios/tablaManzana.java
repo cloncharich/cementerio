@@ -95,6 +95,11 @@ public final class tablaManzana extends javax.swing.JInternalFrame {
                     c.MostrarDatos( "ver", Integer.parseInt(manzana), "actualizar");
 
                 }
+
+                @Override
+                public void onDelete(int row) {
+                   
+                }
             };
             tbl_manzana.getColumnModel().getColumn(3).setCellRenderer(new TablaAccionCeldaRender());
             tbl_manzana.getColumnModel().getColumn(3).setCellEditor(new TablaAccionCeldaEditar(event));

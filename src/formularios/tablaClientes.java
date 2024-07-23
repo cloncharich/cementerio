@@ -118,6 +118,11 @@ public final class tablaClientes extends javax.swing.JInternalFrame {
                     }
 
                 }
+
+                @Override
+                public void onDelete(int row) {
+                    
+                }
             };
             tbl_cli.getColumnModel().getColumn(5).setCellRenderer(new TablaAccionCeldaRender());
             tbl_cli.getColumnModel().getColumn(5).setCellEditor(new TablaAccionCeldaEditar(event));
@@ -157,7 +162,7 @@ public final class tablaClientes extends javax.swing.JInternalFrame {
         setPreferredSize(new java.awt.Dimension(791, 581));
 
         jLabel1.setFont(new java.awt.Font("Roboto Medium", 0, 18)); // NOI18N
-        jLabel1.setText("CLIENTE");
+        jLabel1.setText("TITULARES");
 
         jPanel1.setBackground(new java.awt.Color(250, 250, 250));
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
