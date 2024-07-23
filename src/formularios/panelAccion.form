@@ -48,6 +48,9 @@
           <Image iconType="3" name="/imagenes/edit.png"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editarActionPerformed"/>
+      </Events>
     </Component>
     <Component class="clases.AccionBoton" name="borrar">
       <Properties>
@@ -55,6 +58,9 @@
           <Image iconType="3" name="/imagenes/delete.png"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="borrarActionPerformed"/>
+      </Events>
     </Component>
     <Component class="clases.AccionBoton" name="ver">
       <Properties>

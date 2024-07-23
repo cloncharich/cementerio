@@ -37,6 +37,8 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
         setResizable(false);
         titular.setEditable(false);
         lote_cod.setEditable(false);
+        motivo_anulacion.setVisible(false);
+        anulacion.setVisible(false);
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -48,7 +50,7 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
             @Override
             public void focusGained(FocusEvent e) {
                 Formato.NomenclaturaNumero(documento_titular);
-                
+
             }
         });
 
@@ -56,7 +58,7 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
             @Override
             public void focusGained(FocusEvent e) {
                 Formato.NomenclaturaNumero(monto_cuota);
-               
+
             }
         });
 
@@ -64,7 +66,7 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
             @Override
             public void focusGained(FocusEvent e) {
                 Formato.NomenclaturaNumero(monto_entrega);
-                
+
             }
         });
 
@@ -104,6 +106,10 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
                     + "	SET  cod_cliente=?, entrega=?, cuota=?, cod_lote=?, fecha_vencimiento=?\n"
                     + "	WHERE cod_cabecera=?;";
 
+            String queryAnular = "UPDATE public.alquiler_lote_cliente\n"
+                    + "	SET estado_registro='N'\n"
+                    + "	WHERE cod_cabecera=?;";
+
             String cli = titular.getText();
             int indexCli = cli.indexOf('-');
             if (indexCli != -1) {
@@ -126,6 +132,12 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
                 rowsAffected = DatabaseManager.insert(queryInsert, Integer.parseInt(cli), "A", Integer.parseInt(ent), Integer.parseInt(cuo), Integer.parseInt(lot), fec);
             } else if ("actualizar".equalsIgnoreCase(accionBoton)) {
                 rowsAffected = DatabaseManager.update(queryUpdate, Integer.parseInt(cli), Integer.parseInt(ent), Integer.parseInt(cuo), Integer.parseInt(lot), fec, cod_alquiler);
+            } else if ("anular".equalsIgnoreCase(accionBoton)) {
+                int valor = JOptionPane.showConfirmDialog(this, "Esta seguro de anular el Alquiler?", "Aviso!!", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (valor == JOptionPane.YES_NO_OPTION) {
+                    rowsAffected = DatabaseManager.update(queryAnular, cod_alquiler);
+                }
+                
             }
 
             if (rowsAffected > 0) {
@@ -133,6 +145,9 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
                     JOptionPane.showMessageDialog(this, "Lote registrado con exito", "AVISO", JOptionPane.PLAIN_MESSAGE, Formato.icono("/imagenes/check.png", 40, 40));
                 } else if ("actualizar".equalsIgnoreCase(accionBoton)) {
                     JOptionPane.showMessageDialog(this, "Datos actualizado con exito", "AVISO", JOptionPane.PLAIN_MESSAGE, Formato.icono("/imagenes/check.png", 40, 40));
+                }
+                if ("anular".equalsIgnoreCase(accionBoton)) {
+                    JOptionPane.showMessageDialog(this, "El Alquiler del Lote fue anulado", "AVISO", JOptionPane.PLAIN_MESSAGE, Formato.icono("/imagenes/check.png", 40, 40));
                 }
                 dispose();
                 tablaAlquiler.mostrarTabla("");
@@ -170,7 +185,7 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
                 double cuo = Double.parseDouble(rs.getString(5));
                 monto_cuota.setValue(cuo);
                 SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-                String fecha =rs.getString(6);
+                String fecha = rs.getString(6);
                 Date dato = null;
                 try {
                     dato = formato.parse(fecha);
@@ -185,6 +200,17 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
                     btnCancelar.setEnabled(false);
                     btnBuscarCliente.setEnabled(false);
                     btnBuscarLote.setEnabled(false);
+
+                }
+                if (opcion.equals("anulacion")) {
+                    Formato.habilitarCampos(getContentPane(), false);
+                    anulacion.setVisible(true);
+                    motivo_anulacion.setVisible(true);
+                    motivo_anulacion.setEnabled(true);
+                    btnBuscarCliente.setEnabled(false);
+                    btnBuscarLote.setEnabled(false);
+                    btnCancelar.setEnabled(false);
+                    btnGuardar.setEnabled(true);
 
                 }
             }
@@ -213,7 +239,7 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
         jLabel10 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         fecha_venci = new com.toedter.calendar.JDateChooser();
-        jLabel14 = new javax.swing.JLabel();
+        anulacion = new javax.swing.JLabel();
         monto_cuota = new javax.swing.JFormattedTextField();
         documento_titular = new javax.swing.JFormattedTextField();
         monto_entrega = new javax.swing.JFormattedTextField();
@@ -223,11 +249,13 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
         btnBuscarCliente = new javax.swing.JButton();
         contener_buscarLote = new javax.swing.JPanel();
         btnBuscarLote = new javax.swing.JButton();
+        motivo_anulacion = new javax.swing.JTextField();
+        jLabel15 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(javax.swing.BorderFactory.createEtchedBorder());
         setFrameIcon(null);
-        setPreferredSize(new java.awt.Dimension(678, 329));
+        setPreferredSize(new java.awt.Dimension(678, 358));
 
         panelModalCliente.setBackground(new java.awt.Color(255, 255, 255));
         panelModalCliente.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -279,7 +307,7 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        panelModalCliente.add(contener_cancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 260, 110, -1));
+        panelModalCliente.add(contener_cancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 300, 110, -1));
 
         jLabel3.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
         jLabel3.setText("Documento Titular:");
@@ -387,9 +415,9 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
         });
         panelModalCliente.add(fecha_venci, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 200, 320, 32));
 
-        jLabel14.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
-        jLabel14.setText("Monto cuota:");
-        panelModalCliente.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, 130, 34));
+        anulacion.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
+        anulacion.setText("Motivo Anulación:");
+        panelModalCliente.add(anulacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 230, 130, 40));
 
         monto_cuota.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         monto_cuota.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
@@ -488,7 +516,7 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        panelModalCliente.add(contener_guardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 110, -1));
+        panelModalCliente.add(contener_guardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 300, 110, -1));
 
         contener_buscarCliente.setBackground(new java.awt.Color(80, 90, 100));
 
@@ -582,6 +610,27 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
 
         panelModalCliente.add(contener_buscarLote, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 140, 40, -1));
 
+        motivo_anulacion.setFont(new java.awt.Font("Roboto Light", 0, 12)); // NOI18N
+        motivo_anulacion.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        motivo_anulacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                motivo_anulacionActionPerformed(evt);
+            }
+        });
+        motivo_anulacion.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                motivo_anulacionKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                motivo_anulacionKeyTyped(evt);
+            }
+        });
+        panelModalCliente.add(motivo_anulacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 650, 32));
+
+        jLabel15.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
+        jLabel15.setText("Monto cuota:");
+        panelModalCliente.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, 130, 34));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -590,7 +639,7 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelModalCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
+            .addComponent(panelModalCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -782,8 +831,21 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
         BuscarTitular(documento_titular.getText().replaceAll("\\p{Punct}", ""));         // TODO add your handling code here:
     }//GEN-LAST:event_documento_titularFocusLost
 
+    private void motivo_anulacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_motivo_anulacionActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_motivo_anulacionActionPerformed
+
+    private void motivo_anulacionKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_motivo_anulacionKeyReleased
+
+    }//GEN-LAST:event_motivo_anulacionKeyReleased
+
+    private void motivo_anulacionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_motivo_anulacionKeyTyped
+        EventoTecladoUtil.convertirAMayusculas(evt);       // TODO add your handling code here:
+    }//GEN-LAST:event_motivo_anulacionKeyTyped
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    public static javax.swing.JLabel anulacion;
     public static javax.swing.JButton btnBuscarCliente;
     public static javax.swing.JButton btnBuscarLote;
     public static javax.swing.JButton btnCancelar;
@@ -797,7 +859,7 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
     public static com.toedter.calendar.JDateChooser fecha_venci;
     public static javax.swing.JLabel jLabel10;
     public static javax.swing.JLabel jLabel13;
-    public static javax.swing.JLabel jLabel14;
+    public static javax.swing.JLabel jLabel15;
     public static javax.swing.JLabel jLabel3;
     public static javax.swing.JLabel jLabel4;
     public static javax.swing.JLabel jLabel5;
@@ -805,6 +867,7 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
     public static javax.swing.JTextField lote_cod;
     public static javax.swing.JFormattedTextField monto_cuota;
     public static javax.swing.JFormattedTextField monto_entrega;
+    public static javax.swing.JTextField motivo_anulacion;
     public static javax.swing.JPanel panelModalCliente;
     public static javax.swing.JButton salir;
     public static javax.swing.JTextField titular;

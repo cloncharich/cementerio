@@ -22,7 +22,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import clases.TablaAccionEvento;
 
-
 /**
  *
  * @author Claudio Loncharich
@@ -115,7 +114,14 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
 
                 @Override
                 public void onDelete(int row) {
-                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                    modalAlquiler c = new modalAlquiler();
+                    principalMenu.escritorio.add(c);
+                    Dimension desktopSize = principalMenu.escritorio.getSize();
+                    Dimension FrameSize = c.getSize();
+                    c.setLocation((desktopSize.width - FrameSize.width) / 2, (desktopSize.height - FrameSize.height) / 6);
+                    c.show();
+                    String alquiler = tbl_alquiler.getValueAt(row, 0).toString();
+                    c.MostrarDatos("anulacion", Integer.parseInt(alquiler), "anular");
                 }
             };
             tbl_alquiler.getColumnModel().getColumn(6).setCellRenderer(new TablaAccionCeldaRender());
@@ -134,10 +140,10 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, ex);
         }
     }
-    
-    void MostrarMorosos(){
-        
-          DefaultTableModel modelo1 = new DefaultTableModel() {
+
+    void MostrarMorosos() {
+
+        DefaultTableModel modelo1 = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return column == 6;
@@ -153,7 +159,7 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
         modelo1.addColumn("Monto Total Deuda");
         tbl_alquiler.setModel(modelo1);
         String sql = "SELECT * FROM verificar_mora_clientes()";
-       
+
         String[] datos = new String[8];
         try (Connection conn = DatabaseConnector.getConnection();
                 Statement st = conn.createStatement();
@@ -172,7 +178,7 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex);
         }
-        
+
     }
 
     @SuppressWarnings("unchecked")
@@ -524,7 +530,7 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_nuevo1MouseExited
 
     private void nuevo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevo1ActionPerformed
-MostrarMorosos();        // TODO add your handling code here:
+        MostrarMorosos();        // TODO add your handling code here:
     }//GEN-LAST:event_nuevo1ActionPerformed
 
 
