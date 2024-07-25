@@ -7,7 +7,7 @@ package clases;
 
 /**
  *
- * @author admin
+ * @author Claudio Loncharich
  */
 public interface TablaAccionEvento {
 

@@ -21,6 +21,7 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import clases.TablaAccionEvento;
+import disenho.JTableColor;
 
 /**
  *
@@ -106,7 +107,7 @@ public final class tablaLote extends javax.swing.JInternalFrame {
 
                 @Override
                 public void onDelete(int row) {
-                    
+
                 }
             };
             tbl_lote.getColumnModel().getColumn(5).setCellRenderer(new TablaAccionCeldaRender());
@@ -120,6 +121,12 @@ public final class tablaLote extends javax.swing.JInternalFrame {
             });
 
             searchText1.requestFocus();
+
+            JTableColor pintar = new JTableColor(4);
+             for (int i = 0; i < 5; i++) {
+               tbl_lote.getColumnModel().getColumn(i).setCellRenderer(pintar);
+
+                }
 
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex);

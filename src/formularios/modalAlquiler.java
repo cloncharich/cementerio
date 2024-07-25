@@ -107,7 +107,7 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
                     + "	WHERE cod_cabecera=?;";
 
             String queryAnular = "UPDATE public.alquiler_lote_cliente\n"
-                    + "	SET estado_registro='N'\n"
+                    + "	SET estado_registro='N',motivo_anula=?\n"
                     + "	WHERE cod_cabecera=?;";
 
             String cli = titular.getText();
@@ -135,14 +135,14 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
             } else if ("anular".equalsIgnoreCase(accionBoton)) {
                 int valor = JOptionPane.showConfirmDialog(this, "Esta seguro de anular el Alquiler?", "Aviso!!", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                 if (valor == JOptionPane.YES_NO_OPTION) {
-                    rowsAffected = DatabaseManager.update(queryAnular, cod_alquiler);
+                    rowsAffected = DatabaseManager.update(queryAnular,motivo_anulacion.getText(), cod_alquiler);
                 }
                 
             }
 
             if (rowsAffected > 0) {
                 if ("insertar".equalsIgnoreCase(accionBoton)) {
-                    JOptionPane.showMessageDialog(this, "Lote registrado con exito", "AVISO", JOptionPane.PLAIN_MESSAGE, Formato.icono("/imagenes/check.png", 40, 40));
+                    JOptionPane.showMessageDialog(this, "Alquiler registrado con exito", "AVISO", JOptionPane.PLAIN_MESSAGE, Formato.icono("/imagenes/check.png", 40, 40));
                 } else if ("actualizar".equalsIgnoreCase(accionBoton)) {
                     JOptionPane.showMessageDialog(this, "Datos actualizado con exito", "AVISO", JOptionPane.PLAIN_MESSAGE, Formato.icono("/imagenes/check.png", 40, 40));
                 }
@@ -211,6 +211,7 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
                     btnBuscarLote.setEnabled(false);
                     btnCancelar.setEnabled(false);
                     btnGuardar.setEnabled(true);
+                    motivo_anulacion.requestFocus();
 
                 }
             }
@@ -750,8 +751,12 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnGuardarMouseExited
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        if (!accionBoton.equals("anular")){
+            motivo_anulacion.setText("0");
+        }
         if (Formato.verificarCampos(getContentPane()) == true) {
             GrabarDatos();
+            motivo_anulacion.setText("");
         } else {
             JOptionPane.showMessageDialog(this, "Debe ingresar todos los campos", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         }        // TODO add your handling code here:
@@ -782,7 +787,7 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
                 + "CONCAT(cod_cliente,'-',nombres, ' ', apellidos) AS cliente_nombre from cliente\n"
                 + "where apellidos like ";
 
-        buscador pp = new buscador(sql, new String[]{"Documento", "Titular"}, 2, tfParam);
+        buscador pp = new buscador(sql, new String[]{"Documento", "Titular"}, 2, tfParam,"Order by cod_cliente");
         Dimension desktopSize = principalMenu.escritorio.getSize();
         Dimension FrameSize = pp.getSize();
         pp.setLocation((desktopSize.width - FrameSize.width) / 2, (desktopSize.height - FrameSize.height) / 4);
@@ -814,7 +819,7 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
                 + "   INNER JOIN manzana AS m ON m.cod_manzana = l.cod_manzana\n"
                 + "   where l.estado_registro='L' and l.numero_lote like";
 
-        buscador pp = new buscador(sql, new String[]{"Lotes Libres"}, 1, tfParam);
+        buscador pp = new buscador(sql, new String[]{"Lotes Libres"}, 1, tfParam,"Order by l.cod_lote");
         Dimension desktopSize = principalMenu.escritorio.getSize();
         Dimension FrameSize = pp.getSize();
         pp.setLocation((desktopSize.width - FrameSize.width) / 2, (desktopSize.height - FrameSize.height) / 4);

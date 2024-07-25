@@ -36,13 +36,15 @@ public class buscador extends javax.swing.JFrame {
     String des;
     int cod;
     Object[] tfParam;
+    String by;
 
-    public buscador(String _sql, String[] nomColu, int canColu, Object[] retorno) {
+    public buscador(String _sql, String[] nomColu, int canColu, Object[] retorno,String order) {
         initComponents();
         query = _sql;
         nom = nomColu;
         col = canColu;
         tfParam = retorno;
+        by=order;
 
         ((DefaultTableCellRenderer) tabla.getTableHeader().getDefaultRenderer())
                 .setHorizontalAlignment(SwingConstants.CENTER);
@@ -195,7 +197,7 @@ public class buscador extends javax.swing.JFrame {
         try (Connection cn = DatabaseConnector.getConnection()) {
             st = (Statement) cn.createStatement();
 
-            ResultSet rs = (ResultSet) st.executeQuery(query + " '%" + buscar.getText().toString() + "%'");
+            ResultSet rs = (ResultSet) st.executeQuery(query + " '%" + buscar.getText().toString() + "%' "+by);
             val = new ArrayList<String[]>();
             while (rs.next()) {
                 String[] aux = new String[col];
