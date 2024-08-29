@@ -10,8 +10,6 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
@@ -44,6 +42,7 @@ public final class principalMenu extends javax.swing.JFrame {
         host = hostBase;
         usuarioBase = userBase;
         contrasena = contrasenaBase;
+        usuario.setText(" Usuario: <<" + usuarioBase + ">> Version 1.0.0 Sistema de Gestión para Cementerio");
 
     }
 
@@ -121,16 +120,10 @@ public final class principalMenu extends javax.swing.JFrame {
         clientes7 = new javax.swing.JButton();
         contener_alquiler = new javax.swing.JPanel();
         btnAlquiler = new javax.swing.JButton();
-        contener_referencial1 = new javax.swing.JPanel();
-        referencial1 = new javax.swing.JButton();
-        contener_tipo_producto4 = new javax.swing.JPanel();
-        clientes4 = new javax.swing.JButton();
         contener_registro = new javax.swing.JPanel();
         btnRegistro = new javax.swing.JButton();
         contener_tipo_producto5 = new javax.swing.JPanel();
         clientes5 = new javax.swing.JButton();
-        contener_tipo_producto6 = new javax.swing.JPanel();
-        clientes6 = new javax.swing.JButton();
         contener_tipo_producto10 = new javax.swing.JPanel();
         clientes10 = new javax.swing.JButton();
         contener_tipo_producto8 = new javax.swing.JPanel();
@@ -139,6 +132,16 @@ public final class principalMenu extends javax.swing.JFrame {
         referencial2 = new javax.swing.JButton();
         contener_lote = new javax.swing.JPanel();
         btnLote = new javax.swing.JButton();
+        contener_tipo_producto6 = new javax.swing.JPanel();
+        clientes6 = new javax.swing.JButton();
+        contener_difunto = new javax.swing.JPanel();
+        difunto = new javax.swing.JButton();
+        contener_referencial1 = new javax.swing.JPanel();
+        referencial1 = new javax.swing.JButton();
+        contener_mora = new javax.swing.JPanel();
+        btnMora = new javax.swing.JButton();
+        contener_ventaLote = new javax.swing.JPanel();
+        btnVentaLote = new javax.swing.JButton();
         usuario = new javax.swing.JLabel();
         id_usu = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -162,11 +165,11 @@ public final class principalMenu extends javax.swing.JFrame {
         escritorio.setLayout(escritorioLayout);
         escritorioLayout.setHorizontalGroup(
             escritorioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 428, Short.MAX_VALUE)
+            .addGap(0, 479, Short.MAX_VALUE)
         );
         escritorioLayout.setVerticalGroup(
             escritorioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 718, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         jPanel2.setBackground(new java.awt.Color(80, 90, 100));
@@ -327,7 +330,7 @@ public final class principalMenu extends javax.swing.JFrame {
         contener_tipo_producto7.setLayout(contener_tipo_producto7Layout);
         contener_tipo_producto7Layout.setHorizontalGroup(
             contener_tipo_producto7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(clientes7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(clientes7, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
         );
         contener_tipo_producto7Layout.setVerticalGroup(
             contener_tipo_producto7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -359,96 +362,17 @@ public final class principalMenu extends javax.swing.JFrame {
             }
         });
 
-        contener_referencial1.setBackground(new java.awt.Color(80, 90, 100));
-
-        referencial1.setBackground(new java.awt.Color(255, 255, 255));
-        referencial1.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        referencial1.setForeground(new java.awt.Color(255, 255, 255));
-        referencial1.setText("REPORTES");
-        referencial1.setContentAreaFilled(false);
-        referencial1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        referencial1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        referencial1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        referencial1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                referencial1MouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                referencial1MouseExited(evt);
-            }
-        });
-        referencial1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                referencial1ActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout contener_referencial1Layout = new javax.swing.GroupLayout(contener_referencial1);
-        contener_referencial1.setLayout(contener_referencial1Layout);
-        contener_referencial1Layout.setHorizontalGroup(
-            contener_referencial1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(referencial1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        contener_referencial1Layout.setVerticalGroup(
-            contener_referencial1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(contener_referencial1Layout.createSequentialGroup()
-                .addComponent(referencial1)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-
-        contener_tipo_producto4.setBackground(new java.awt.Color(80, 90, 100));
-
-        clientes4.setBackground(new java.awt.Color(0, 153, 153));
-        clientes4.setFont(new java.awt.Font("Roboto Light", 1, 12)); // NOI18N
-        clientes4.setForeground(new java.awt.Color(255, 255, 255));
-        clientes4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/registros.png"))); // NOI18N
-        clientes4.setText("Ficha Cliente");
-        clientes4.setContentAreaFilled(false);
-        clientes4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        clientes4.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        clientes4.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        clientes4.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                clientes4MouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                clientes4MouseExited(evt);
-            }
-        });
-        clientes4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clientes4ActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout contener_tipo_producto4Layout = new javax.swing.GroupLayout(contener_tipo_producto4);
-        contener_tipo_producto4.setLayout(contener_tipo_producto4Layout);
-        contener_tipo_producto4Layout.setHorizontalGroup(
-            contener_tipo_producto4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(clientes4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        contener_tipo_producto4Layout.setVerticalGroup(
-            contener_tipo_producto4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(clientes4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-
         javax.swing.GroupLayout contener_alquilerLayout = new javax.swing.GroupLayout(contener_alquiler);
         contener_alquiler.setLayout(contener_alquilerLayout);
         contener_alquilerLayout.setHorizontalGroup(
             contener_alquilerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(btnAlquiler, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(contener_referencial1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(contener_tipo_producto4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         contener_alquilerLayout.setVerticalGroup(
             contener_alquilerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(contener_alquilerLayout.createSequentialGroup()
                 .addComponent(btnAlquiler, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, 0)
-                .addComponent(contener_referencial1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(contener_tipo_producto4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
+                .addGap(93, 93, 93))
         );
 
         contener_registro.setBackground(new java.awt.Color(80, 90, 100));
@@ -513,55 +437,15 @@ public final class principalMenu extends javax.swing.JFrame {
             }
         });
 
-        contener_tipo_producto6.setBackground(new java.awt.Color(80, 90, 100));
-
-        clientes6.setBackground(new java.awt.Color(0, 153, 153));
-        clientes6.setFont(new java.awt.Font("Roboto Light", 1, 12)); // NOI18N
-        clientes6.setForeground(new java.awt.Color(255, 255, 255));
-        clientes6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/9.png"))); // NOI18N
-        clientes6.setText("Imprimir Balances");
-        clientes6.setContentAreaFilled(false);
-        clientes6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        clientes6.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        clientes6.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        clientes6.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                clientes6MouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                clientes6MouseExited(evt);
-            }
-        });
-        clientes6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clientes6ActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout contener_tipo_producto6Layout = new javax.swing.GroupLayout(contener_tipo_producto6);
-        contener_tipo_producto6.setLayout(contener_tipo_producto6Layout);
-        contener_tipo_producto6Layout.setHorizontalGroup(
-            contener_tipo_producto6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(clientes6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        contener_tipo_producto6Layout.setVerticalGroup(
-            contener_tipo_producto6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(clientes6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-
         javax.swing.GroupLayout contener_tipo_producto5Layout = new javax.swing.GroupLayout(contener_tipo_producto5);
         contener_tipo_producto5.setLayout(contener_tipo_producto5Layout);
         contener_tipo_producto5Layout.setHorizontalGroup(
             contener_tipo_producto5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(clientes5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(contener_tipo_producto6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         contener_tipo_producto5Layout.setVerticalGroup(
             contener_tipo_producto5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(contener_tipo_producto5Layout.createSequentialGroup()
-                .addComponent(clientes5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, 0)
-                .addComponent(contener_tipo_producto6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(clientes5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         contener_tipo_producto10.setBackground(new java.awt.Color(80, 90, 100));
@@ -709,6 +593,193 @@ public final class principalMenu extends javax.swing.JFrame {
             .addComponent(btnLote, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+        contener_tipo_producto6.setBackground(new java.awt.Color(80, 90, 100));
+
+        clientes6.setBackground(new java.awt.Color(0, 153, 153));
+        clientes6.setFont(new java.awt.Font("Roboto Light", 1, 12)); // NOI18N
+        clientes6.setForeground(new java.awt.Color(255, 255, 255));
+        clientes6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/9.png"))); // NOI18N
+        clientes6.setText("Imprimir Balances");
+        clientes6.setContentAreaFilled(false);
+        clientes6.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        clientes6.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        clientes6.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        clientes6.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                clientes6MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                clientes6MouseExited(evt);
+            }
+        });
+        clientes6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clientes6ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout contener_tipo_producto6Layout = new javax.swing.GroupLayout(contener_tipo_producto6);
+        contener_tipo_producto6.setLayout(contener_tipo_producto6Layout);
+        contener_tipo_producto6Layout.setHorizontalGroup(
+            contener_tipo_producto6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(clientes6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        contener_tipo_producto6Layout.setVerticalGroup(
+            contener_tipo_producto6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(clientes6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        contener_difunto.setBackground(new java.awt.Color(80, 90, 100));
+
+        difunto.setBackground(new java.awt.Color(0, 153, 153));
+        difunto.setFont(new java.awt.Font("Roboto Light", 1, 12)); // NOI18N
+        difunto.setForeground(new java.awt.Color(255, 255, 255));
+        difunto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/registros.png"))); // NOI18N
+        difunto.setText("Difuntos");
+        difunto.setContentAreaFilled(false);
+        difunto.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        difunto.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        difunto.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        difunto.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                difuntoMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                difuntoMouseExited(evt);
+            }
+        });
+        difunto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                difuntoActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout contener_difuntoLayout = new javax.swing.GroupLayout(contener_difunto);
+        contener_difunto.setLayout(contener_difuntoLayout);
+        contener_difuntoLayout.setHorizontalGroup(
+            contener_difuntoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(difunto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        contener_difuntoLayout.setVerticalGroup(
+            contener_difuntoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contener_difuntoLayout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(difunto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        contener_referencial1.setBackground(new java.awt.Color(80, 90, 100));
+
+        referencial1.setBackground(new java.awt.Color(255, 255, 255));
+        referencial1.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        referencial1.setForeground(new java.awt.Color(255, 255, 255));
+        referencial1.setText("PROCESOS");
+        referencial1.setContentAreaFilled(false);
+        referencial1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        referencial1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        referencial1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        referencial1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                referencial1MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                referencial1MouseExited(evt);
+            }
+        });
+        referencial1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                referencial1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout contener_referencial1Layout = new javax.swing.GroupLayout(contener_referencial1);
+        contener_referencial1.setLayout(contener_referencial1Layout);
+        contener_referencial1Layout.setHorizontalGroup(
+            contener_referencial1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(referencial1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        contener_referencial1Layout.setVerticalGroup(
+            contener_referencial1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contener_referencial1Layout.createSequentialGroup()
+                .addComponent(referencial1)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        contener_mora.setBackground(new java.awt.Color(80, 90, 100));
+
+        btnMora.setBackground(new java.awt.Color(0, 153, 153));
+        btnMora.setFont(new java.awt.Font("Roboto Light", 1, 12)); // NOI18N
+        btnMora.setForeground(new java.awt.Color(255, 255, 255));
+        btnMora.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/registros.png"))); // NOI18N
+        btnMora.setText("Titulares con Mora");
+        btnMora.setContentAreaFilled(false);
+        btnMora.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnMora.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnMora.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        btnMora.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnMoraMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnMoraMouseExited(evt);
+            }
+        });
+        btnMora.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMoraActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout contener_moraLayout = new javax.swing.GroupLayout(contener_mora);
+        contener_mora.setLayout(contener_moraLayout);
+        contener_moraLayout.setHorizontalGroup(
+            contener_moraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnMora, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        contener_moraLayout.setVerticalGroup(
+            contener_moraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contener_moraLayout.createSequentialGroup()
+                .addComponent(btnMora, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(93, 93, 93))
+        );
+
+        contener_ventaLote.setBackground(new java.awt.Color(80, 90, 100));
+
+        btnVentaLote.setBackground(new java.awt.Color(0, 153, 153));
+        btnVentaLote.setFont(new java.awt.Font("Roboto Light", 1, 12)); // NOI18N
+        btnVentaLote.setForeground(new java.awt.Color(255, 255, 255));
+        btnVentaLote.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/7.png"))); // NOI18N
+        btnVentaLote.setText("Venta de  Lotes");
+        btnVentaLote.setContentAreaFilled(false);
+        btnVentaLote.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnVentaLote.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnVentaLote.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        btnVentaLote.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnVentaLoteMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnVentaLoteMouseExited(evt);
+            }
+        });
+        btnVentaLote.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVentaLoteActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout contener_ventaLoteLayout = new javax.swing.GroupLayout(contener_ventaLote);
+        contener_ventaLote.setLayout(contener_ventaLoteLayout);
+        contener_ventaLoteLayout.setHorizontalGroup(
+            contener_ventaLoteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnVentaLote, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        contener_ventaLoteLayout.setVerticalGroup(
+            contener_ventaLoteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contener_ventaLoteLayout.createSequentialGroup()
+                .addComponent(btnVentaLote, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(93, 93, 93))
+        );
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -727,6 +798,11 @@ public final class principalMenu extends javax.swing.JFrame {
             .addComponent(contener_referencial2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(contener_tipo_producto9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(contener_tipo_producto10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(contener_tipo_producto6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(contener_difunto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(contener_referencial1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(contener_mora, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(contener_ventaLote, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -739,9 +815,19 @@ public final class principalMenu extends javax.swing.JFrame {
                 .addGap(0, 0, 0)
                 .addComponent(contener_lote, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(contener_alquiler, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(contener_alquiler, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(contener_ventaLote, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(2, 2, 2)
+                .addComponent(contener_mora, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(contener_referencial1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(contener_difunto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(contener_tipo_producto5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(contener_tipo_producto6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(contener_tipo_producto7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
@@ -752,12 +838,12 @@ public final class principalMenu extends javax.swing.JFrame {
                 .addComponent(contener_tipo_producto9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(contener_tipo_producto10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         usuario.setBackground(new java.awt.Color(153, 204, 255));
-        usuario.setFont(new java.awt.Font("Roboto Medium", 0, 10)); // NOI18N
+        usuario.setFont(new java.awt.Font("Roboto Medium", 0, 12)); // NOI18N
         usuario.setPreferredSize(new java.awt.Dimension(34, 14));
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -864,9 +950,9 @@ public final class principalMenu extends javax.swing.JFrame {
                     .addComponent(escritorio, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(usuario, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                        .addGap(0, 0, 0)
+                        .addComponent(usuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(contener_minimizar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(1, 1, 1)
                         .addComponent(confirmar_cerrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1034,17 +1120,24 @@ public final class principalMenu extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_referencial1ActionPerformed
 
-    private void clientes4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clientes4MouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_clientes4MouseEntered
+    private void difuntoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_difuntoMouseEntered
+        contener_difunto.setBackground(new Color(51, 51, 51));        // TODO add your handling code here:
+    }//GEN-LAST:event_difuntoMouseEntered
 
-    private void clientes4MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clientes4MouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_clientes4MouseExited
+    private void difuntoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_difuntoMouseExited
+        contener_difunto.setBackground(new Color(80, 90, 100));        // TODO add your handling code here:
+    }//GEN-LAST:event_difuntoMouseExited
 
-    private void clientes4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clientes4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_clientes4ActionPerformed
+    private void difuntoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_difuntoActionPerformed
+        cerrarInternal();
+        ventanasNombre = VentanasPermisosUsuario.obtenerUsuarioVentana();
+        if (VentanasPermisosUsuario.permisosVentana("DIFUNTO", ventanasNombre)) {
+            abrirVentana(tablaDifunto.class, "");
+
+        } else {
+            abrirVentana(noTienePermiso.class, "");
+        }          // TODO add your handling code here:
+    }//GEN-LAST:event_difuntoActionPerformed
 
     private void clientes5MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clientes5MouseEntered
         // TODO add your handling code here:
@@ -1130,6 +1223,44 @@ public final class principalMenu extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_clientes10ActionPerformed
 
+    private void btnMoraMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMoraMouseEntered
+ contener_mora.setBackground(new Color(51, 51, 51));         // TODO add your handling code here:
+    }//GEN-LAST:event_btnMoraMouseEntered
+
+    private void btnMoraMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMoraMouseExited
+ contener_mora.setBackground(new Color(80, 90, 100));          // TODO add your handling code here:
+    }//GEN-LAST:event_btnMoraMouseExited
+
+    private void btnMoraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoraActionPerformed
+        cerrarInternal();
+        ventanasNombre = VentanasPermisosUsuario.obtenerUsuarioVentana();
+        if (VentanasPermisosUsuario.permisosVentana("MOROSOS", ventanasNombre)) {
+            abrirVentana(tablaMorosos.class, "");
+
+        } else {
+            abrirVentana(noTienePermiso.class, "");
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_btnMoraActionPerformed
+
+    private void btnVentaLoteMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVentaLoteMouseEntered
+        contener_ventaLote.setBackground(new Color(51, 51, 51));          // TODO add your handling code here:
+    }//GEN-LAST:event_btnVentaLoteMouseEntered
+
+    private void btnVentaLoteMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVentaLoteMouseExited
+        contener_ventaLote.setBackground(new Color(80, 90, 100));        // TODO add your handling code here:
+    }//GEN-LAST:event_btnVentaLoteMouseExited
+
+    private void btnVentaLoteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVentaLoteActionPerformed
+        cerrarInternal();
+        ventanasNombre = VentanasPermisosUsuario.obtenerUsuarioVentana();
+        if (VentanasPermisosUsuario.permisosVentana("VENTALOTE", ventanasNombre)) {
+            abrirVentana(tablaVentaLote.class, "");
+
+        } else {
+            abrirVentana(noTienePermiso.class, "");
+        }       // TODO add your handling code here:
+    }//GEN-LAST:event_btnVentaLoteActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1181,9 +1312,10 @@ public final class principalMenu extends javax.swing.JFrame {
     public static javax.swing.JButton btnCliente;
     public static javax.swing.JButton btnLote;
     public static javax.swing.JButton btnManzana;
+    public static javax.swing.JButton btnMora;
     public static javax.swing.JButton btnRegistro;
+    public static javax.swing.JButton btnVentaLote;
     public static javax.swing.JButton clientes10;
-    public static javax.swing.JButton clientes4;
     public static javax.swing.JButton clientes5;
     public static javax.swing.JButton clientes6;
     public static javax.swing.JButton clientes7;
@@ -1192,19 +1324,22 @@ public final class principalMenu extends javax.swing.JFrame {
     public static javax.swing.JPanel confirmar_cerrar;
     public static javax.swing.JPanel contener_alquiler;
     public static javax.swing.JPanel contener_cliente;
+    public static javax.swing.JPanel contener_difunto;
     public static javax.swing.JPanel contener_lote;
     public static javax.swing.JPanel contener_manzana;
     public static javax.swing.JPanel contener_minimizar;
+    public static javax.swing.JPanel contener_mora;
     public static javax.swing.JPanel contener_referencial1;
     public static javax.swing.JPanel contener_referencial2;
     public static javax.swing.JPanel contener_registro;
     public static javax.swing.JPanel contener_tipo_producto10;
-    public static javax.swing.JPanel contener_tipo_producto4;
     public static javax.swing.JPanel contener_tipo_producto5;
     public static javax.swing.JPanel contener_tipo_producto6;
     public static javax.swing.JPanel contener_tipo_producto7;
     public static javax.swing.JPanel contener_tipo_producto8;
     public static javax.swing.JPanel contener_tipo_producto9;
+    public static javax.swing.JPanel contener_ventaLote;
+    public static javax.swing.JButton difunto;
     public static javax.swing.JDesktopPane escritorio;
     public static javax.swing.JLabel id_usu;
     public static javax.swing.JLabel jLabel1;

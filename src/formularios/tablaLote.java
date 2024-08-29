@@ -102,11 +102,20 @@ public final class tablaLote extends javax.swing.JInternalFrame {
                     c.show();
                     String lote = tbl_lote.getValueAt(row, 0).toString();
                     c.MostrarDatos("ver", Integer.parseInt(lote), "actualizar");
+                    
 
                 }
 
                 @Override
                 public void onDelete(int row) {
+                    modalLote c = new modalLote();
+                    principalMenu.escritorio.add(c);
+                    Dimension desktopSize = principalMenu.escritorio.getSize();
+                    Dimension FrameSize = c.getSize();
+                    c.setLocation((desktopSize.width - FrameSize.width) / 2, (desktopSize.height - FrameSize.height) / 6);
+                    c.show();
+                    String lote = tbl_lote.getValueAt(row, 0).toString();
+                   c.MostrarDatos("anulacion", Integer.parseInt(lote), "anular");
 
                 }
             };

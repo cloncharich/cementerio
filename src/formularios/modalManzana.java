@@ -1,5 +1,6 @@
 package formularios;
 
+import clases.CustomSQLExceptionHandler;
 import clases.DatabaseConnector;
 import clases.DatabaseManager;
 import clases.EventoTecladoUtil;
@@ -65,7 +66,8 @@ public final class modalManzana extends javax.swing.JInternalFrame {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(modalManzana.this, e.getMessage(), "Error al grabar/actualizar registro", JOptionPane.ERROR_MESSAGE);
+           // JOptionPane.showMessageDialog(modalManzana.this, e.getMessage(), "Error al grabar/actualizar registro", JOptionPane.ERROR_MESSAGE);
+            CustomSQLExceptionHandler.showCustomMessage(e);
         }
     }
 

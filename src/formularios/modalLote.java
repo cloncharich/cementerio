@@ -1,5 +1,6 @@
 package formularios;
 
+import clases.CustomSQLExceptionHandler;
 import clases.DatabaseConnector;
 import clases.DatabaseManager;
 import clases.EventoTecladoUtil;
@@ -26,6 +27,9 @@ public final class modalLote extends javax.swing.JInternalFrame {
         ((javax.swing.plaf.basic.BasicInternalFrameUI) this.getUI()).setNorthPane(null);
         setResizable(false);
         MostrarManzanas();
+        motivo.setVisible(false);
+        jLabel13.setVisible(false);
+        estados.setVisible(false);
         codigo_lote.setEditable(false);
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -43,7 +47,11 @@ public final class modalLote extends javax.swing.JInternalFrame {
                     + "	VALUES (?, ?, ?, ?, ?,?,?,?);";
 
             String queryUpdate = "UPDATE public.lote\n"
-                    + "	SET  numero_lote=?, dimension=?, construido=?, estado_registro=?, cta_catastral=?, cant_dif_habilitados=?, cod_manzana=?,serie=?\n"
+                    + "	SET  numero_lote=?, dimension=?, construido=?, cta_catastral=?, cant_dif_habilitados=?, cod_manzana=?,serie=?\n"
+                    + "	WHERE cod_lote=?;";
+            
+           String queryAnular = "UPDATE public.lote\n"
+                    + "	SET  estado_registro=?, motivo_cambio=?\n"
                     + "	WHERE cod_lote=?;";
 
             String lo = lote.getText();//campo numero_lote
@@ -71,7 +79,17 @@ public final class modalLote extends javax.swing.JInternalFrame {
             if ("insertar".equalsIgnoreCase(accionBoton)) {
                 rowsAffected = DatabaseManager.insert(queryInsert, lo, dim, cons, "L", cta, Integer.parseInt(cant), Integer.parseInt(man), ser);
             } else if ("actualizar".equalsIgnoreCase(accionBoton)) {
-                rowsAffected = DatabaseManager.update(queryUpdate,  lo, dim, cons, "L", cta, Integer.parseInt(cant), Integer.parseInt(man), ser,codi_lote);
+                rowsAffected = DatabaseManager.update(queryUpdate, lo, dim, cons, cta, Integer.parseInt(cant), Integer.parseInt(man), ser, codi_lote);
+            } else if ("anular".equalsIgnoreCase(accionBoton)) {
+                int valor = JOptionPane.showConfirmDialog(this, "Esta seguro de cambiar el estado del lote?", "Aviso!!", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                if (valor == JOptionPane.YES_NO_OPTION) {
+                String estado_lote = "";
+                if (libre.isSelected()==true){estado_lote="L";}
+                if (recuperado.isSelected()==true){estado_lote="R";}
+                if (problemas.isSelected()==true){estado_lote="P";}
+                    rowsAffected = DatabaseManager.update(queryAnular,estado_lote, motivo.getText(),codi_lote);
+                }
+
             }
 
             if (rowsAffected > 0) {
@@ -85,7 +103,8 @@ public final class modalLote extends javax.swing.JInternalFrame {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(modalLote.this, e.getMessage(), "Error al grabar/actualizar registro", JOptionPane.ERROR_MESSAGE);
+            //JOptionPane.showMessageDialog(modalLote.this, e.getMessage(), "Error al grabar/actualizar registro", JOptionPane.ERROR_MESSAGE);
+            CustomSQLExceptionHandler.showCustomMessage(e);
         }
     }
 
@@ -110,16 +129,15 @@ public final class modalLote extends javax.swing.JInternalFrame {
                     no.setSelected(false);
                 } else {
                     if (con.equals("N")) {
-                     no.setSelected(true);
-                     si.setSelected(false);
+                        no.setSelected(true);
+                        si.setSelected(false);
                     }
                 }
                 cuenta_catastral.setText(rs.getString("cta_catastral"));
                 lugares.setText(rs.getString("cant_dif_habilitados"));
                 serie.setText(rs.getString("serie"));
-                numero_manzana.setSelectedItem(rs.getString("cod_manzana")+"="+rs.getString("codigo"));
+                numero_manzana.setSelectedItem(rs.getString("cod_manzana") + "=" + rs.getString("codigo"));
                 ManzanaLote();
-                
 
                 if (opcion.equals("ver")) {
                     Formato.habilitarCampos(getContentPane(), false);
@@ -127,6 +145,25 @@ public final class modalLote extends javax.swing.JInternalFrame {
                     btnCancelar.setEnabled(false);
 
                 }
+
+                if (opcion.equals("anulacion")) {
+                    Formato.habilitarCampos(getContentPane(), false);
+                    motivo.setVisible(true);
+                    jLabel13.setVisible(true);
+                    estados.setVisible(true);
+                    btnGuardar.setEnabled(true);
+                    btnCancelar.setEnabled(false);
+                    motivo.setEnabled(true);
+                    estados.setEnabled(true);
+                    libre.setEnabled(true);
+                    recuperado.setEnabled(true);
+                    problemas.setEnabled(true);
+                    jLabel4.setText("MODIFICAR ESTADO DE LOTE");
+                    jLabel4.setForeground(Color.red);
+                    motivo.requestFocus();
+
+                }
+
             }
 
         } catch (SQLException e) {
@@ -193,11 +230,17 @@ public final class modalLote extends javax.swing.JInternalFrame {
         jLabel12 = new javax.swing.JLabel();
         contener_guardar = new javax.swing.JPanel();
         btnGuardar = new javax.swing.JButton();
+        jLabel13 = new javax.swing.JLabel();
+        motivo = new javax.swing.JTextField();
+        estados = new javax.swing.JPanel();
+        libre = new javax.swing.JCheckBox();
+        recuperado = new javax.swing.JCheckBox();
+        problemas = new javax.swing.JCheckBox();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(javax.swing.BorderFactory.createEtchedBorder());
         setFrameIcon(null);
-        setPreferredSize(new java.awt.Dimension(678, 310));
+        setPreferredSize(new java.awt.Dimension(678, 369));
 
         panelModalCliente.setBackground(new java.awt.Color(255, 255, 255));
         panelModalCliente.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -249,7 +292,7 @@ public final class modalLote extends javax.swing.JInternalFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        panelModalCliente.add(contener_cancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 260, 110, -1));
+        panelModalCliente.add(contener_cancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 300, 110, -1));
 
         jLabel3.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
         jLabel3.setText("Codigo Lote:");
@@ -257,7 +300,7 @@ public final class modalLote extends javax.swing.JInternalFrame {
 
         jLabel4.setFont(new java.awt.Font("Roboto Medium", 0, 18)); // NOI18N
         jLabel4.setText("ALTA LOTE");
-        panelModalCliente.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 170, -1));
+        panelModalCliente.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 520, -1));
 
         contener_salir.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -523,7 +566,75 @@ public final class modalLote extends javax.swing.JInternalFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        panelModalCliente.add(contener_guardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 110, -1));
+        panelModalCliente.add(contener_guardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 300, 110, -1));
+
+        jLabel13.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
+        jLabel13.setText("Motivo:");
+        panelModalCliente.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 225, 130, 34));
+
+        motivo.setFont(new java.awt.Font("Roboto Light", 0, 12)); // NOI18N
+        motivo.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        motivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                motivoActionPerformed(evt);
+            }
+        });
+        motivo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                motivoKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                motivoKeyTyped(evt);
+            }
+        });
+        panelModalCliente.add(motivo, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 255, 430, 32));
+
+        estados.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Estados"));
+
+        libre.setText("LIBRE");
+        libre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                libreActionPerformed(evt);
+            }
+        });
+
+        recuperado.setText("RECUPERADO");
+        recuperado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                recuperadoActionPerformed(evt);
+            }
+        });
+
+        problemas.setText("CON PROBLEMAS");
+        problemas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                problemasActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout estadosLayout = new javax.swing.GroupLayout(estados);
+        estados.setLayout(estadosLayout);
+        estadosLayout.setHorizontalGroup(
+            estadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(estadosLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(estadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(libre, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(recuperado, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(problemas, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)))
+        );
+        estadosLayout.setVerticalGroup(
+            estadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(estadosLayout.createSequentialGroup()
+                .addComponent(libre)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(recuperado)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(problemas)
+                .addContainerGap())
+        );
+
+        panelModalCliente.add(estados, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 180, 210, 110));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -533,7 +644,7 @@ public final class modalLote extends javax.swing.JInternalFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelModalCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
+            .addComponent(panelModalCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE)
         );
 
         pack();
@@ -699,12 +810,48 @@ public final class modalLote extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnGuardarMouseExited
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-         if (Formato.verificarCampos(getContentPane()) == true) {
+        if (!accionBoton.equals("anular")) {
+            motivo.setText("0");
+            libre.setSelected(true);
+        }
+        if (Formato.verificarCampos(getContentPane()) == true) {
             GrabarDatos();
+            motivo.setText("");
+            libre.setSelected(false);
         } else {
             JOptionPane.showMessageDialog(this, "Debe ingresar todos los campos", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         }       // TODO add your handling code here:
     }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void motivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_motivoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_motivoActionPerformed
+
+    private void motivoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_motivoKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_motivoKeyReleased
+
+    private void motivoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_motivoKeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_motivoKeyTyped
+
+    private void libreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_libreActionPerformed
+        recuperado.setSelected(false);
+        problemas.setSelected(false);
+        libre.setSelected(true);// TODO add your handling code here:
+    }//GEN-LAST:event_libreActionPerformed
+
+    private void recuperadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recuperadoActionPerformed
+        libre.setSelected(false);
+        problemas.setSelected(false);
+        recuperado.setSelected(true);        // TODO add your handling code here:
+    }//GEN-LAST:event_recuperadoActionPerformed
+
+    private void problemasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_problemasActionPerformed
+        recuperado.setSelected(false);
+        libre.setSelected(false);
+        problemas.setSelected(true);// TODO add your handling code here:
+    }//GEN-LAST:event_problemasActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -716,20 +863,26 @@ public final class modalLote extends javax.swing.JInternalFrame {
     public static javax.swing.JPanel contener_salir;
     public static javax.swing.JTextField cuenta_catastral;
     public static javax.swing.JTextField dimension;
+    public static javax.swing.JPanel estados;
     public static javax.swing.JLabel jLabel10;
     public static javax.swing.JLabel jLabel11;
     public static javax.swing.JLabel jLabel12;
+    public static javax.swing.JLabel jLabel13;
     public static javax.swing.JLabel jLabel3;
     public static javax.swing.JLabel jLabel4;
     public static javax.swing.JLabel jLabel5;
     public static javax.swing.JLabel jLabel7;
     public static javax.swing.JLabel jLabel8;
     public static javax.swing.JLabel jLabel9;
+    public static javax.swing.JCheckBox libre;
     public static javax.swing.JTextField lote;
     public static javax.swing.JTextField lugares;
+    public static javax.swing.JTextField motivo;
     public static javax.swing.JCheckBox no;
     public static javax.swing.JComboBox<String> numero_manzana;
     public static javax.swing.JPanel panelModalCliente;
+    public static javax.swing.JCheckBox problemas;
+    public static javax.swing.JCheckBox recuperado;
     public static javax.swing.JButton salir;
     public static javax.swing.JTextField serie;
     public static javax.swing.JCheckBox si;

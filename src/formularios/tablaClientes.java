@@ -121,7 +121,7 @@ public final class tablaClientes extends javax.swing.JInternalFrame {
 
                 @Override
                 public void onDelete(int row) {
-                    
+          
                 }
             };
             tbl_cli.getColumnModel().getColumn(5).setCellRenderer(new TablaAccionCeldaRender());

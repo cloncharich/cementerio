@@ -21,6 +21,8 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import clases.TablaAccionEvento;
+import disenho.JTableColor;
+import static formularios.tablaLote.tbl_lote;
 
 /**
  *
@@ -50,7 +52,7 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
         modelo1.addColumn("Numero Lote");
         modelo1.addColumn("Monto Entrega");
         modelo1.addColumn("Monto Cuota");
-        modelo1.addColumn("Fecha Vencimiento");
+        modelo1.addColumn("Primer Vencimiento");
         modelo1.addColumn("Acción");
         tbl_alquiler.setModel(modelo1);
         String sql = " WITH cliente_info AS (\n"
@@ -64,7 +66,7 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
                 + "    INNER JOIN cliente AS t ON t.cod_cliente = a.cod_cliente\n"
                 + "    INNER JOIN lote AS l ON l.cod_lote = a.cod_lote\n"
                 + "    INNER JOIN manzana AS m ON m.cod_manzana = l.cod_manzana "
-                + "WHERE a.estado_registro = 'A'\n"
+                + "WHERE a.estado_registro = 'A' and a.tipo='A'\n"
                 + ")\n"
                 + "SELECT * FROM cliente_info";
         if (!valor.equals("")) {
@@ -146,7 +148,7 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
         DefaultTableModel modelo1 = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 6;
+                return column == 8;
             }
         };
         modelo1.addColumn("Codigo de Alquiler");
@@ -154,7 +156,7 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
         modelo1.addColumn("Titular");
         modelo1.addColumn("Numero Lote");
         modelo1.addColumn("Monto Cuota");
-        modelo1.addColumn("Ultimo Vencimiento");
+        modelo1.addColumn("Vencimiento");
         modelo1.addColumn("Cant.Cuota Mora");
         modelo1.addColumn("Monto Total Deuda");
         tbl_alquiler.setModel(modelo1);
@@ -173,10 +175,36 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
             }
             tbl_alquiler.setModel(modelo1);
             TablaDesign.configurarTabla(tbl_alquiler, jScrollPane1);
-            searchText1.requestFocus();
+            //searchText1.requestFocus();
+            jPanel3.setVisible(false);
+
+            JTableColor renderer = new JTableColor(4);
+
+            for (int i = 0; i < tbl_alquiler.getColumnCount(); i++) {
+                tbl_alquiler.getColumnModel().getColumn(i).setCellRenderer(renderer);
+            }
 
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex);
+        }
+
+    }
+
+     public void mover() throws PropertyVetoException {
+        int fila = tbl_alquiler.getSelectedRow();
+        if (fila >= 0) {
+            modalCobro c = new modalCobro();
+            principalMenu.escritorio.add(c);
+            Dimension desktopSize = principalMenu.escritorio.getSize();
+            Dimension FrameSize = c.getSize();
+            c.setLocation((desktopSize.width - FrameSize.width) / 2, (desktopSize.height - FrameSize.height) / 2);
+            c.show();
+            c.setMaximum(true);
+            modalCobro.MostrarDatos(Integer.parseInt(tbl_alquiler.getValueAt(fila, 0).toString()), "ABRIR");
+            modalCobro.focus.doClick();
+
+        } else {
+            JOptionPane.showMessageDialog(null, "Por favor seleccione un alquiler para poder generar el cobro", "AVISO", JOptionPane.INFORMATION_MESSAGE);
         }
 
     }
@@ -194,8 +222,8 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         searchText1 = new disenho.BuscarTexto();
-        contener_nuevo1 = new javax.swing.JPanel();
-        nuevo1 = new javax.swing.JButton();
+        contener_nuevo2 = new javax.swing.JPanel();
+        nuevo2 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_alquiler = new javax.swing.JTable();
@@ -298,51 +326,51 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
             .addComponent(searchText1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        contener_nuevo1.setBackground(new java.awt.Color(80, 90, 100));
-        contener_nuevo1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+        contener_nuevo2.setBackground(new java.awt.Color(80, 90, 100));
+        contener_nuevo2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
 
-        nuevo1.setBackground(new java.awt.Color(80, 90, 100));
-        nuevo1.setFont(new java.awt.Font("Roboto Medium", 1, 12)); // NOI18N
-        nuevo1.setForeground(new java.awt.Color(224, 224, 224));
-        nuevo1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/nuevo.png"))); // NOI18N
-        nuevo1.setText("VENCIDOS");
-        nuevo1.setBorder(null);
-        nuevo1.setContentAreaFilled(false);
-        nuevo1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        nuevo1.addFocusListener(new java.awt.event.FocusAdapter() {
+        nuevo2.setBackground(new java.awt.Color(80, 90, 100));
+        nuevo2.setFont(new java.awt.Font("Roboto Medium", 1, 12)); // NOI18N
+        nuevo2.setForeground(new java.awt.Color(224, 224, 224));
+        nuevo2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/venta.png"))); // NOI18N
+        nuevo2.setText("COBROS");
+        nuevo2.setBorder(null);
+        nuevo2.setContentAreaFilled(false);
+        nuevo2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        nuevo2.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                nuevo1FocusGained(evt);
+                nuevo2FocusGained(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                nuevo1FocusLost(evt);
+                nuevo2FocusLost(evt);
             }
         });
-        nuevo1.addMouseListener(new java.awt.event.MouseAdapter() {
+        nuevo2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                nuevo1MouseEntered(evt);
+                nuevo2MouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                nuevo1MouseExited(evt);
+                nuevo2MouseExited(evt);
             }
         });
-        nuevo1.addActionListener(new java.awt.event.ActionListener() {
+        nuevo2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nuevo1ActionPerformed(evt);
+                nuevo2ActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout contener_nuevo1Layout = new javax.swing.GroupLayout(contener_nuevo1);
-        contener_nuevo1.setLayout(contener_nuevo1Layout);
-        contener_nuevo1Layout.setHorizontalGroup(
-            contener_nuevo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(contener_nuevo1Layout.createSequentialGroup()
-                .addComponent(nuevo1, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+        javax.swing.GroupLayout contener_nuevo2Layout = new javax.swing.GroupLayout(contener_nuevo2);
+        contener_nuevo2.setLayout(contener_nuevo2Layout);
+        contener_nuevo2Layout.setHorizontalGroup(
+            contener_nuevo2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contener_nuevo2Layout.createSequentialGroup()
+                .addComponent(nuevo2, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
-        contener_nuevo1Layout.setVerticalGroup(
-            contener_nuevo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(contener_nuevo1Layout.createSequentialGroup()
-                .addComponent(nuevo1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+        contener_nuevo2Layout.setVerticalGroup(
+            contener_nuevo2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contener_nuevo2Layout.createSequentialGroup()
+                .addComponent(nuevo2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 1, Short.MAX_VALUE))
         );
 
@@ -354,10 +382,10 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addComponent(contener_nuevo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(contener_nuevo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(contener_nuevo2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(120, 120, 120)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 131, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -371,7 +399,7 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(12, 12, 12)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(contener_nuevo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(contener_nuevo2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(contener_nuevo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -513,30 +541,34 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
         EventoTecladoUtil.permitirMayusculasYNumeros(evt);         // TODO add your handling code here:
     }//GEN-LAST:event_searchText1KeyTyped
 
-    private void nuevo1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nuevo1FocusGained
+    private void nuevo2FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nuevo2FocusGained
         // TODO add your handling code here:
-    }//GEN-LAST:event_nuevo1FocusGained
+    }//GEN-LAST:event_nuevo2FocusGained
 
-    private void nuevo1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nuevo1FocusLost
+    private void nuevo2FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nuevo2FocusLost
         // TODO add your handling code here:
-    }//GEN-LAST:event_nuevo1FocusLost
+    }//GEN-LAST:event_nuevo2FocusLost
 
-    private void nuevo1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevo1MouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_nuevo1MouseEntered
+    private void nuevo2MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevo2MouseEntered
+        contener_nuevo2.setBackground(new Color(51, 51, 51));         // TODO add your handling code here:
+    }//GEN-LAST:event_nuevo2MouseEntered
 
-    private void nuevo1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevo1MouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_nuevo1MouseExited
+    private void nuevo2MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nuevo2MouseExited
+        contener_nuevo2.setBackground(new Color(80, 90, 100));        // TODO add your handling code here:
+    }//GEN-LAST:event_nuevo2MouseExited
 
-    private void nuevo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevo1ActionPerformed
-        MostrarMorosos();        // TODO add your handling code here:
-    }//GEN-LAST:event_nuevo1ActionPerformed
+    private void nuevo2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevo2ActionPerformed
+        try {
+            mover();        // TODO add your handling code here:
+        } catch (PropertyVetoException ex) {
+            Logger.getLogger(tablaAlquiler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_nuevo2ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public static javax.swing.JPanel contener_nuevo;
-    public static javax.swing.JPanel contener_nuevo1;
+    public static javax.swing.JPanel contener_nuevo2;
     public static javax.swing.JButton jButton1;
     public static javax.swing.JButton jButton2;
     public static javax.swing.JLabel jLabel1;
@@ -546,7 +578,7 @@ public final class tablaAlquiler extends javax.swing.JInternalFrame {
     public static javax.swing.JPanel jPanel3;
     public static javax.swing.JScrollPane jScrollPane1;
     public static javax.swing.JButton nuevo;
-    public static javax.swing.JButton nuevo1;
+    public static javax.swing.JButton nuevo2;
     public static disenho.BuscarTexto searchText1;
     public static javax.swing.JTable tbl_alquiler;
     // End of variables declaration//GEN-END:variables

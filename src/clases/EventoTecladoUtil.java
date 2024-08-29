@@ -54,6 +54,15 @@ public class EventoTecladoUtil {
             evt.consume();  // Consumir el evento si no es un número, una coma o un guion
         }
     }
+      
+      
+        public static void permitirNumerosYGuiones(KeyEvent evt) {
+        char c = evt.getKeyChar();
+ 
+        if (!Character.isDigit(c)  && c != '-' && c != 'x') {
+            evt.consume();  // Consumir el evento si no es un número, una coma o un guion
+        }
+    }
     
        
 }

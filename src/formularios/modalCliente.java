@@ -1,8 +1,10 @@
 package formularios;
 
+import clases.CustomSQLExceptionHandler;
 import clases.DatabaseConnector;
 import clases.FileChooserHandler;
 import clases.DatabaseManager;
+import clases.EmailValidator;
 import clases.EventoTecladoUtil;
 import clases.PathPrincipal;
 import disenho.Formato;
@@ -14,7 +16,12 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
@@ -25,8 +32,8 @@ import javax.swing.text.MaskFormatter;
  */
 public final class modalCliente extends javax.swing.JInternalFrame {
 
-    String ruta = "",accionBoton="insertar";
-    int contador=0,cliente=0;
+    String ruta = "", accionBoton = "insertar";
+    int contador = 0, cliente = 0;
 
     public modalCliente() {
         initComponents();
@@ -35,13 +42,12 @@ public final class modalCliente extends javax.swing.JInternalFrame {
         ruta = PathPrincipal.obtenerPathStorage();
         documento_titular.requestFocusInWindow();
 
-        documento_titular.addFocusListener(new FocusAdapter() {
+        /*  documento_titular.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
                 Formato.NomenclaturaNumero(documento_titular);
             }
-        });
-
+        });*/
         addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
             public void componentShown(java.awt.event.ComponentEvent evt) {
@@ -55,57 +61,70 @@ public final class modalCliente extends javax.swing.JInternalFrame {
         documento_titular.requestFocusInWindow(); // Establecer el foco en documento_titular
     }
 
-   private void GrabarDatos() {
-    // tabla cliente en la base
-    try {
-        String queryInsert = "INSERT INTO cliente (documento, nombres, apellidos, celular, familiar_relacionado, " +
-                             "telefono_familiar, familiar_relacionado_su, telefono_familiar_su, direccion) " +
-                             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private void GrabarDatos() {
+        // tabla cliente en la base
+        try {
+            String queryInsert = "INSERT INTO cliente (documento, nombres, apellidos, celular, familiar_relacionado, "
+                    + "telefono_familiar, familiar_relacionado_su, telefono_familiar_su, direccion,edad,fecha_nacimiento,nacionalidad,barrio,ciudad,email) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?)";
 
-        String queryUpdate = "UPDATE cliente SET documento=?, nombres=?, apellidos=?, celular=?, familiar_relacionado=?, " +
-                             "telefono_familiar=?, familiar_relacionado_su=?, telefono_familiar_su=?, direccion=? " +
-                             "WHERE cod_cliente=?";
+            String queryUpdate = "UPDATE cliente SET documento=?, nombres=?, apellidos=?, celular=?, familiar_relacionado=?, "
+                    + "telefono_familiar=?, familiar_relacionado_su=?, telefono_familiar_su=?, direccion=?,edad=?,fecha_nacimiento=?,nacionalidad=?,barrio=?,ciudad=?,email=? "
+                    + "WHERE cod_cliente=?";
 
-        String ci = documento_titular.getText().replaceAll("\\p{Punct}", ""); // campo documento
-        String nom = nombre_titular.getText(); // campo nombres
-        String ape = apellido_titular.getText(); // campo apellidos
-        String cel = celular_titular.getText(); // campo celular
-        String faRe = primer_familiar_nombre.getText(); // campo familiar_relacionado
-        String teFa = telefono_primer.getText(); // campo telefono_familiar
-        String faRe2 = segundo_familiar_nombre.getText(); // campo familiar_relacionado_su
-        String teFa2 = telefono_segundo.getText(); // campo telefono_familiar_su
-        String dir = direccion_titular.getText(); // campo direccion
+            String ci = documento_titular.getText(); // campo documento
+            String nom = nombre_titular.getText(); // campo nombres
+            String ape = apellido_titular.getText(); // campo apellidos
+            String cel = celular_titular.getText(); // campo celular
+            String faRe = primer_familiar_nombre.getText(); // campo familiar_relacionado
+            String teFa = telefono_primer.getText(); // campo telefono_familiar
+            String faRe2 = segundo_familiar_nombre.getText(); // campo familiar_relacionado_su
+            String teFa2 = telefono_segundo.getText(); // campo telefono_familiar_su
+            String dir = direccion_titular.getText(); // campo direccion
+            int ed = Integer.parseInt(edad.getText());
+            DateFormat dateFormat = new SimpleDateFormat("yyy-MM-dd");
+            String fecha_nac = dateFormat.format(fecha_nacimiento.getDate());
+            java.sql.Date fec = java.sql.Date.valueOf(fecha_nac);
+            String nac=nacionalidad.getText();
+            String bar=barrio.getText();
+            String ciu=ciudad.getText();
+            String em=email.getText();
 
-        int rowsAffected = 0;
-        if ("insertar".equalsIgnoreCase(accionBoton)) {
-            rowsAffected = DatabaseManager.insert(queryInsert, ci, nom, ape, cel, faRe, teFa, faRe2, teFa2, dir);
-        } else if ("actualizar".equalsIgnoreCase(accionBoton)) {
-            // Supongamos que obtienes el ID del cliente de alguna manera (por ejemplo, desde un campo oculto)
-            //int idCliente = obtenerIdCliente(); // Método ficticio para obtener el ID del cliente a actualizar
-            rowsAffected = DatabaseManager.update(queryUpdate, ci, nom, ape, cel, faRe, teFa, faRe2, teFa2, dir, cliente);
-        }
-
-        if (rowsAffected > 0) {
+            int rowsAffected = 0;
             if ("insertar".equalsIgnoreCase(accionBoton)) {
-                        JOptionPane.showMessageDialog(this, "Titular registrado con exito", "AVISO", JOptionPane.PLAIN_MESSAGE, Formato.icono("/imagenes/check.png", 40, 40));
+                rowsAffected = DatabaseManager.insert(queryInsert, ci, nom, ape, cel, faRe, teFa, faRe2, teFa2, dir,ed,fec,nac,bar,ciu,em);
             } else if ("actualizar".equalsIgnoreCase(accionBoton)) {
-                        JOptionPane.showMessageDialog(this, "Datos actualizado con exito", "AVISO", JOptionPane.PLAIN_MESSAGE, Formato.icono("/imagenes/check.png", 40, 40));
+                //int idCliente = obtenerIdCliente(); // Método ficticio para obtener el ID del cliente a actualizar
+                rowsAffected = DatabaseManager.update(queryUpdate, ci, nom, ape, cel, faRe, teFa, faRe2, teFa2, dir,ed,fec,nac,bar,ciu,em, cliente);
+
             }
-            Formato.habilitarCampos(getContentPane(), false);
-            tablaClientes.mostrarTabla("");
+
+            if (rowsAffected > 0) {
+                contador = 1;
+                btnGuardar.setEnabled(false);
+                btnCancelar.setEnabled(false);
+                if ("insertar".equalsIgnoreCase(accionBoton)) {
+                    JOptionPane.showMessageDialog(this, "Titular registrado con exito", "AVISO", JOptionPane.PLAIN_MESSAGE, Formato.icono("/imagenes/check.png", 40, 40));
+                } else if ("actualizar".equalsIgnoreCase(accionBoton)) {
+                    JOptionPane.showMessageDialog(this, "Datos actualizado con exito", "AVISO", JOptionPane.PLAIN_MESSAGE, Formato.icono("/imagenes/check.png", 40, 40));
+                }
+                Formato.habilitarCampos(getContentPane(), false);
+                tablaClientes.mostrarTabla("");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            //JOptionPane.showMessageDialog(modalCliente.this, e.getMessage(), "Error al grabar/actualizar registro", JOptionPane.ERROR_MESSAGE);
+            CustomSQLExceptionHandler.showCustomMessage(e);
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(modalCliente.this, e.getMessage(), "Error al grabar/actualizar registro", JOptionPane.ERROR_MESSAGE);
     }
-}
 
-
-    public void MostrarDatos(String valor, String opcion,int id,String accion) throws ParseException {
-        cliente=id;
-        accionBoton=accion;
+    public void MostrarDatos(String valor, String opcion, int id, String accion) throws ParseException {
+        cliente = id;
+        accionBoton = accion;
         String query = "select documento,nombres,apellidos,celular,familiar_relacionado,\n"
-                + "telefono_familiar,familiar_relacionado_su,telefono_familiar_su,direccion \n"
+                + "telefono_familiar,familiar_relacionado_su,telefono_familiar_su,direccion,edad,\n"
+                + "TO_CHAR(fecha_nacimiento, 'DD/MM/YYYY') AS fecha_nacimiento,\n"
+                + "nacionalidad,barrio,ciudad,email \n"
                 + "from cliente where documento='" + valor + "'";
         try (Connection conn = DatabaseConnector.getConnection();
                 Statement st = conn.createStatement();
@@ -114,7 +133,7 @@ public final class modalCliente extends javax.swing.JInternalFrame {
             if (rs.next()) {
                 nombre_titular.setText(rs.getString("nombres"));
                 double doc = Double.parseDouble(rs.getString("documento"));
-                documento_titular.setValue(doc);
+                documento_titular.setText(rs.getString("documento"));
                 apellido_titular.setText(rs.getString("apellidos"));
                 MaskFormatter formatter = new MaskFormatter("(+##) ####-###-###");
                 String celular = rs.getString("celular").replaceAll("[^0-9]", "").trim();
@@ -145,16 +164,33 @@ public final class modalCliente extends javax.swing.JInternalFrame {
                 primer_familiar_nombre.setText(rs.getString("familiar_relacionado"));
                 segundo_familiar_nombre.setText(rs.getString("familiar_relacionado_su"));
                 telefono_segundo.setValue(rs.getString("telefono_familiar_su"));
+                edad.setText(rs.getString("edad"));
+                nacionalidad.setText(rs.getString("nacionalidad"));
+                barrio.setText(rs.getString("barrio"));
+                ciudad.setText(rs.getString("ciudad"));
+                email.setText(rs.getString("email"));
+                
+                SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+                String fecha = rs.getString("fecha_nacimiento");
+                Date d = null;
+                try {
+                    d = formato.parse(fecha);
+                    fecha_nacimiento.setDate(d);
+                } catch (ParseException ex) {
+                    Logger.getLogger(modalCliente.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                
+                
                 if (opcion.equals("ver")) {
                     Formato.habilitarCampos(getContentPane(), false);
                     btnGuardar.setEnabled(false);
                     btnCancelar.setEnabled(false);
                     btnFotoDocumento.setEnabled(false);
                     btnFotoServicios.setEnabled(false);
-                    
+
                 }
                 contador = 1;
-                
 
             }
 
@@ -205,14 +241,26 @@ public final class modalCliente extends javax.swing.JInternalFrame {
         tercer_extra = new javax.swing.JCheckBox();
         celular_titular = new javax.swing.JFormattedTextField();
         nombre_titular = new javax.swing.JTextField();
-        documento_titular = new javax.swing.JFormattedTextField();
         contener_guardar = new javax.swing.JPanel();
         btnGuardar = new javax.swing.JButton();
+        jLabel13 = new javax.swing.JLabel();
+        edad = new javax.swing.JTextField();
+        jLabel14 = new javax.swing.JLabel();
+        fecha_nacimiento = new com.toedter.calendar.JDateChooser();
+        jLabel15 = new javax.swing.JLabel();
+        nacionalidad = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
+        barrio = new javax.swing.JTextField();
+        jLabel17 = new javax.swing.JLabel();
+        ciudad = new javax.swing.JTextField();
+        jLabel18 = new javax.swing.JLabel();
+        documento_titular = new javax.swing.JTextField();
+        email = new javax.swing.JTextField();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(javax.swing.BorderFactory.createEtchedBorder());
         setFrameIcon(null);
-        setPreferredSize(new java.awt.Dimension(880, 452));
+        setPreferredSize(new java.awt.Dimension(880, 568));
 
         panelModalCliente.setBackground(new java.awt.Color(255, 255, 255));
         panelModalCliente.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -314,7 +362,7 @@ public final class modalCliente extends javax.swing.JInternalFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        panelModalCliente.add(contener_cancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 380, 110, 34));
+        panelModalCliente.add(contener_cancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 490, 110, 34));
 
         jLabel9.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
         jLabel9.setText("Telefono Primer Familiar:");
@@ -695,20 +743,6 @@ public final class modalCliente extends javax.swing.JInternalFrame {
         });
         panelModalCliente.add(nombre_titular, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 70, 320, 32));
 
-        documento_titular.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        documento_titular.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
-        documento_titular.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                documento_titularFocusGained(evt);
-            }
-        });
-        documento_titular.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                documento_titularKeyTyped(evt);
-            }
-        });
-        panelModalCliente.add(documento_titular, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 310, 32));
-
         contener_guardar.setBackground(new java.awt.Color(80, 90, 100));
 
         btnGuardar.setBackground(new java.awt.Color(153, 204, 255));
@@ -756,7 +790,147 @@ public final class modalCliente extends javax.swing.JInternalFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        panelModalCliente.add(contener_guardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 380, 110, -1));
+        panelModalCliente.add(contener_guardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 490, 110, -1));
+
+        jLabel13.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
+        jLabel13.setText("Edad:");
+        panelModalCliente.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 340, 70, 34));
+
+        edad.setFont(new java.awt.Font("Roboto Light", 0, 12)); // NOI18N
+        edad.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        edad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                edadActionPerformed(evt);
+            }
+        });
+        edad.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                edadKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                edadKeyTyped(evt);
+            }
+        });
+        panelModalCliente.add(edad, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 370, 100, 32));
+
+        jLabel14.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
+        jLabel14.setText("Fecha Nacimiento:");
+        panelModalCliente.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 340, 130, 34));
+
+        fecha_nacimiento.setBackground(new java.awt.Color(204, 204, 204));
+        fecha_nacimiento.setForeground(new java.awt.Color(204, 204, 204));
+        fecha_nacimiento.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                fecha_nacimientoFocusLost(evt);
+            }
+        });
+        panelModalCliente.add(fecha_nacimiento, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 370, 200, 32));
+
+        jLabel15.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
+        jLabel15.setText("Nacionalidad:");
+        panelModalCliente.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 340, 120, 34));
+
+        nacionalidad.setFont(new java.awt.Font("Roboto Light", 0, 12)); // NOI18N
+        nacionalidad.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        nacionalidad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nacionalidadActionPerformed(evt);
+            }
+        });
+        nacionalidad.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                nacionalidadKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                nacionalidadKeyTyped(evt);
+            }
+        });
+        panelModalCliente.add(nacionalidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 370, 320, 32));
+
+        jLabel16.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
+        jLabel16.setText("Barrio:");
+        panelModalCliente.add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 400, 70, 34));
+
+        barrio.setFont(new java.awt.Font("Roboto Light", 0, 12)); // NOI18N
+        barrio.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        barrio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                barrioActionPerformed(evt);
+            }
+        });
+        barrio.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                barrioKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                barrioKeyTyped(evt);
+            }
+        });
+        panelModalCliente.add(barrio, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 430, 150, 32));
+
+        jLabel17.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
+        jLabel17.setText("Ciudad:");
+        panelModalCliente.add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 400, 70, 34));
+
+        ciudad.setFont(new java.awt.Font("Roboto Light", 0, 12)); // NOI18N
+        ciudad.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        ciudad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ciudadActionPerformed(evt);
+            }
+        });
+        ciudad.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                ciudadKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                ciudadKeyTyped(evt);
+            }
+        });
+        panelModalCliente.add(ciudad, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 430, 150, 32));
+
+        jLabel18.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
+        jLabel18.setText("Email:");
+        panelModalCliente.add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 400, 70, 34));
+
+        documento_titular.setFont(new java.awt.Font("Roboto Light", 0, 12)); // NOI18N
+        documento_titular.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        documento_titular.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                documento_titularActionPerformed(evt);
+            }
+        });
+        documento_titular.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                documento_titularKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                documento_titularKeyTyped(evt);
+            }
+        });
+        panelModalCliente.add(documento_titular, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 310, 32));
+
+        email.setFont(new java.awt.Font("Roboto Light", 0, 12)); // NOI18N
+        email.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        email.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                emailFocusLost(evt);
+            }
+        });
+        email.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                emailActionPerformed(evt);
+            }
+        });
+        email.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                emailKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                emailKeyTyped(evt);
+            }
+        });
+        panelModalCliente.add(email, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 430, 320, 32));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -768,7 +942,7 @@ public final class modalCliente extends javax.swing.JInternalFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelModalCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(panelModalCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 544, Short.MAX_VALUE)
         );
 
         pack();
@@ -976,14 +1150,6 @@ public final class modalCliente extends javax.swing.JInternalFrame {
         EventoTecladoUtil.convertirAMayusculas(evt);        // TODO add your handling code here:
     }//GEN-LAST:event_nombre_titularKeyTyped
 
-    private void documento_titularFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_documento_titularFocusGained
-        // TODO add your handling code here:
-    }//GEN-LAST:event_documento_titularFocusGained
-
-    private void documento_titularKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_documento_titularKeyTyped
-
-    }//GEN-LAST:event_documento_titularKeyTyped
-
     private void btnverFotosFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnverFotosFocusGained
         // TODO add your handling code here:
     }//GEN-LAST:event_btnverFotosFocusGained
@@ -1033,22 +1199,105 @@ public final class modalCliente extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnGuardarMouseExited
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-         if (Formato.verificarCampos(getContentPane()) == true) {
+        if (Formato.verificarCampos(getContentPane()) == true) {
             GrabarDatos();
         } else {
             JOptionPane.showMessageDialog(this, "Debe ingresar todos los campos", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         }       // TODO add your handling code here:
     }//GEN-LAST:event_btnGuardarActionPerformed
 
+    private void edadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edadActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_edadActionPerformed
+
+    private void edadKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edadKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_edadKeyReleased
+
+    private void edadKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edadKeyTyped
+        EventoTecladoUtil.permitirSoloDigitos(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_edadKeyTyped
+
+    private void fecha_nacimientoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fecha_nacimientoFocusLost
+
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fecha_nacimientoFocusLost
+
+    private void nacionalidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nacionalidadActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nacionalidadActionPerformed
+
+    private void nacionalidadKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nacionalidadKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nacionalidadKeyReleased
+
+    private void nacionalidadKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nacionalidadKeyTyped
+EventoTecladoUtil.convertirAMayusculas(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_nacionalidadKeyTyped
+
+    private void barrioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_barrioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_barrioActionPerformed
+
+    private void barrioKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_barrioKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_barrioKeyReleased
+
+    private void barrioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_barrioKeyTyped
+        EventoTecladoUtil.convertirAMayusculas(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_barrioKeyTyped
+
+    private void ciudadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ciudadActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ciudadActionPerformed
+
+    private void ciudadKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_ciudadKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ciudadKeyReleased
+
+    private void ciudadKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_ciudadKeyTyped
+        EventoTecladoUtil.convertirAMayusculas(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_ciudadKeyTyped
+
+    private void documento_titularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_documento_titularActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_documento_titularActionPerformed
+
+    private void documento_titularKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_documento_titularKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_documento_titularKeyReleased
+
+    private void documento_titularKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_documento_titularKeyTyped
+        EventoTecladoUtil.permitirNumerosYGuiones(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_documento_titularKeyTyped
+
+    private void emailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emailActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_emailActionPerformed
+
+    private void emailKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_emailKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_emailKeyReleased
+
+    private void emailKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_emailKeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_emailKeyTyped
+
+    private void emailFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_emailFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_emailFocusLost
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public static javax.swing.JTextField apellido_titular;
+    public static javax.swing.JTextField barrio;
     public static javax.swing.JButton btnCancelar;
     public static javax.swing.JButton btnFotoDocumento;
     public static javax.swing.JButton btnFotoServicios;
     public static javax.swing.JButton btnGuardar;
     public static javax.swing.JButton btnverFotos;
     public static javax.swing.JFormattedTextField celular_titular;
+    public static javax.swing.JTextField ciudad;
     public static javax.swing.JPanel contener_cancelar;
     public static javax.swing.JPanel contener_fotoDocumento;
     public static javax.swing.JPanel contener_guardar;
@@ -1056,11 +1305,20 @@ public final class modalCliente extends javax.swing.JInternalFrame {
     public static javax.swing.JPanel contener_serviciosFoto;
     public static javax.swing.JPanel contener_verFotos;
     public static javax.swing.JTextField direccion_titular;
-    public static javax.swing.JFormattedTextField documento_titular;
+    public static javax.swing.JTextField documento_titular;
+    public static javax.swing.JTextField edad;
+    public static javax.swing.JTextField email;
+    public static com.toedter.calendar.JDateChooser fecha_nacimiento;
     public static javax.swing.JLabel jLabel1;
     public static javax.swing.JLabel jLabel10;
     public static javax.swing.JLabel jLabel11;
     public static javax.swing.JLabel jLabel12;
+    public static javax.swing.JLabel jLabel13;
+    public static javax.swing.JLabel jLabel14;
+    public static javax.swing.JLabel jLabel15;
+    public static javax.swing.JLabel jLabel16;
+    public static javax.swing.JLabel jLabel17;
+    public static javax.swing.JLabel jLabel18;
     public static javax.swing.JLabel jLabel2;
     public static javax.swing.JLabel jLabel3;
     public static javax.swing.JLabel jLabel4;
@@ -1068,6 +1326,7 @@ public final class modalCliente extends javax.swing.JInternalFrame {
     public static javax.swing.JLabel jLabel7;
     public static javax.swing.JLabel jLabel8;
     public static javax.swing.JLabel jLabel9;
+    public static javax.swing.JTextField nacionalidad;
     public static javax.swing.JTextField nombre_titular;
     public static javax.swing.JPanel panelFoto;
     public static javax.swing.JPanel panelModalCliente;
