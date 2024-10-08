@@ -25,7 +25,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  * @author Claudio loncharich
  */
 
-public class buscador extends javax.swing.JFrame {
+public class buscadorLote extends javax.swing.JFrame {
 
     ResultSet rest, recur2;
 
@@ -39,7 +39,7 @@ public class buscador extends javax.swing.JFrame {
     String by;
     String[] searchColumns; // Columnas a buscar
 
-    public buscador(String _sql, String[] nomColu, int canColu, Object[] retorno,String order,String[] searchColumnas) {
+    public buscadorLote(String _sql, String[] nomColu, int canColu, Object[] retorno,String order,String[] searchColumnas) {
         initComponents();
         query = _sql;
         nom = nomColu;
@@ -54,7 +54,7 @@ public class buscador extends javax.swing.JFrame {
         Buscado();
     }
 
-    private buscador() {
+    private buscadorLote() {
        
     }
 
@@ -195,23 +195,14 @@ public class buscador extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void Buscado() {
-         Statement st;
-        try (Connection cn = DatabaseConnector.getConnection()) {
-            st = cn.createStatement();
-
+       try (Connection cn = DatabaseConnector.getConnection(); Statement st = cn.createStatement()) {
             // Construcción dinámica de la consulta SQL con múltiples LIKE
             StringBuilder queryBuilder = new StringBuilder(query);
-            queryBuilder.append(" WHERE ");
-            for (int i = 0; i < searchColumns.length; i++) {
-                queryBuilder.append(searchColumns[i]).append(" LIKE '%").append(buscar.getText()).append("%'");
-                if (i < searchColumns.length - 1) {
-                    queryBuilder.append(" OR ");
-                }
-            }
+            queryBuilder.append(" '%").append(buscar.getText()).append("%'");
             queryBuilder.append(" ").append(by);
 
             ResultSet rs = st.executeQuery(queryBuilder.toString());
-            val = new ArrayList<>();
+            val.clear();
             while (rs.next()) {
                 String[] aux = new String[col];
                 for (int i = 0; i < aux.length; i++) {
@@ -295,14 +286,22 @@ EventoTecladoUtil.permitirMayusculasYNumeros(evt);
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(buscador.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(buscadorLote.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(buscador.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(buscadorLote.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(buscador.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(buscadorLote.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(buscador.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(buscadorLote.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -315,7 +314,7 @@ EventoTecladoUtil.permitirMayusculasYNumeros(evt);
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new buscador().setVisible(true);
+                new buscadorLote().setVisible(true);
             }
         });
     }

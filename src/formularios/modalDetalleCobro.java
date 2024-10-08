@@ -29,17 +29,18 @@ import javax.swing.table.DefaultTableModel;
 public final class modalDetalleCobro extends javax.swing.JInternalFrame {
 
     String accionBoton = "insertar";
-    int cod_alquiler = 0;
+    public static int cod_alquiler = 0;
 
     public modalDetalleCobro() {
         initComponents();
         ((javax.swing.plaf.basic.BasicInternalFrameUI) this.getUI()).setNorthPane(null);
         setResizable(false);
         contener_pasar.setVisible(false);
+        contener_pasar1.setVisible(false);
 
     }
 
-  public static void mostrarTabla(int valor, String accion) {
+    public static void mostrarTabla(int valor, String accion, int valor2) {
         DefaultTableModel modelo1 = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -55,7 +56,7 @@ public final class modalDetalleCobro extends javax.swing.JInternalFrame {
         modelo1.addColumn("Check");
 
         tbl_pendiente.setModel(modelo1);
-        String sql = "select * from fn_obtener_cuotas_y_mantenimiento(" + valor + ") where estado='PENDIENTE DE PAGO' order by vencimiento,concepto";
+        String sql = "select * from fn_obtener_cuotas_y_mantenimiento(" + valor + "," + valor2 + ") where estado='PENDIENTE DE PAGO' order by vencimiento,concepto";
         Object[] datos = new Object[7];
         try (Connection conn = DatabaseConnector.getConnection();
                 Statement st = conn.createStatement();
@@ -127,12 +128,17 @@ public final class modalDetalleCobro extends javax.swing.JInternalFrame {
             todos.setEnabled(enableCheckboxes);
             contener_pasar.setVisible(enableCheckboxes);
 
+            cod_alquiler = valor;
+            if (accion.equals("mover")) {
+                contener_pasar1.setVisible(true);
+            }
+
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex);
         }
-    } 
-    
-   /*static class CheckBoxEditor extends DefaultCellEditor {
+    }
+
+    /*static class CheckBoxEditor extends DefaultCellEditor {
     private final JCheckBox checkBox;
     private final boolean enableSequential;
 
@@ -158,7 +164,6 @@ public final class modalDetalleCobro extends javax.swing.JInternalFrame {
         return checkBox.isSelected();
     }
 }*/
-
     public static void transferirFilasSeleccionadas(JTable tablaOrigen, JTable tablaDestino) {
         DefaultTableModel modeloOrigen = (DefaultTableModel) tablaOrigen.getModel();
         DefaultTableModel modeloDestino = (DefaultTableModel) tablaDestino.getModel();
@@ -197,8 +202,6 @@ public final class modalDetalleCobro extends javax.swing.JInternalFrame {
         }
 
     }
-    
-  
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -213,6 +216,8 @@ public final class modalDetalleCobro extends javax.swing.JInternalFrame {
         todos = new javax.swing.JCheckBox();
         contener_pasar = new javax.swing.JPanel();
         btnGuardar = new javax.swing.JButton();
+        contener_pasar1 = new javax.swing.JPanel();
+        btnGuardar1 = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -348,6 +353,51 @@ public final class modalDetalleCobro extends javax.swing.JInternalFrame {
 
         panelModalCliente.add(contener_pasar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 310, 90, 30));
 
+        contener_pasar1.setBackground(new java.awt.Color(80, 90, 100));
+
+        btnGuardar1.setBackground(new java.awt.Color(153, 204, 255));
+        btnGuardar1.setFont(new java.awt.Font("Roboto Medium", 1, 12)); // NOI18N
+        btnGuardar1.setForeground(new java.awt.Color(255, 255, 255));
+        btnGuardar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/venta.png"))); // NOI18N
+        btnGuardar1.setText("DESCONTAR MORA");
+        btnGuardar1.setBorder(null);
+        btnGuardar1.setContentAreaFilled(false);
+        btnGuardar1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnGuardar1.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                btnGuardar1FocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                btnGuardar1FocusLost(evt);
+            }
+        });
+        btnGuardar1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnGuardar1MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnGuardar1MouseExited(evt);
+            }
+        });
+        btnGuardar1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardar1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout contener_pasar1Layout = new javax.swing.GroupLayout(contener_pasar1);
+        contener_pasar1.setLayout(contener_pasar1Layout);
+        contener_pasar1Layout.setHorizontalGroup(
+            contener_pasar1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnGuardar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        contener_pasar1Layout.setVerticalGroup(
+            contener_pasar1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnGuardar1, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
+        );
+
+        panelModalCliente.add(contener_pasar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 310, 160, 30));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -407,10 +457,34 @@ public final class modalDetalleCobro extends javax.swing.JInternalFrame {
         dispose();// TODO add your handling code here:
     }//GEN-LAST:event_btnGuardarActionPerformed
 
+    private void btnGuardar1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnGuardar1FocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnGuardar1FocusGained
+
+    private void btnGuardar1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnGuardar1FocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnGuardar1FocusLost
+
+    private void btnGuardar1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGuardar1MouseEntered
+        contener_pasar1.setBackground(new Color(51, 51, 51));         // TODO add your handling code here:
+    }//GEN-LAST:event_btnGuardar1MouseEntered
+
+    private void btnGuardar1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGuardar1MouseExited
+        contener_pasar1.setBackground(new Color(80, 90, 100));         // TODO add your handling code here:
+    }//GEN-LAST:event_btnGuardar1MouseExited
+
+    private void btnGuardar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardar1ActionPerformed
+        mostrarTabla(cod_alquiler, "mover", 0); 
+
+// TODO add your handling code here:
+    }//GEN-LAST:event_btnGuardar1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public static javax.swing.JButton btnGuardar;
+    public static javax.swing.JButton btnGuardar1;
     public static javax.swing.JPanel contener_pasar;
+    public static javax.swing.JPanel contener_pasar1;
     public static javax.swing.JPanel contener_salir;
     public static javax.swing.JLabel jLabel4;
     public static javax.swing.JScrollPane jScrollPane1;

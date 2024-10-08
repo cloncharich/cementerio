@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9c60923c-f671-4ac0-82b0-6e3150ae2f8f">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="103"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="CodAlquiler" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="letraDimension" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="letraDimencion2" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    TO_CHAR((alquiler_lote_cliente."cuota" * alquiler_lote_cliente."cantidad_cuota") + alquiler_lote_cliente."entrega", 'FM999G999G990D00') AS total,
+    cliente."nombres" || ' ' || cliente."apellidos" AS nombre_apellido,
+    TO_CHAR(alquiler_lote_cliente."fecha_inserto", 'YYYY') AS ANO,
+    TO_CHAR(alquiler_lote_cliente."fecha_inserto", 'DD') AS dia_semana,
+    CASE EXTRACT(MONTH FROM alquiler_lote_cliente."fecha_inserto")
+        WHEN 1 THEN 'Enero'
+        WHEN 2 THEN 'Febrero'
+        WHEN 3 THEN 'Marzo'
+        WHEN 4 THEN 'Abril'
+        WHEN 5 THEN 'Mayo'
+        WHEN 6 THEN 'Junio'
+        WHEN 7 THEN 'Julio'
+        WHEN 8 THEN 'Agosto'
+        WHEN 9 THEN 'Septiembre'
+        WHEN 10 THEN 'Octubre'
+        WHEN 11 THEN 'Noviembre'
+        WHEN 12 THEN 'Diciembre'
+    END AS mes,
+    TO_CHAR(alquiler_lote_cliente."fecha_inserto", 'DD-MM-YYYY') AS alquiler_lote_cliente_fecha_inserto,
+    cliente."nombres" AS cliente_nombres,
+    cliente."apellidos" AS cliente_apellidos,
+    cliente."documento" AS cliente_documento,
+    cliente."direccion" AS cliente_direccion,
+    cliente."ciudad" AS cliente_ciudad,
+    cliente."celular" AS cliente_celular,
+    lote."cant_dif_habilitados" AS lote_cant_dif_habilitados,
+    lote."dimension" AS lote_dimension,
+    manzana."codigo" AS manzana_codigo,
+    lote."numero_lote" AS lote_numero_lote,
+    lote."serie" AS lote_serie,
+    TO_CHAR(alquiler_lote_cliente."cuota", 'FM999G999G990D00') AS alquiler_lote_cliente_cuota,
+    TO_CHAR(alquiler_lote_cliente."entrega", 'FM999G999G990D00') AS alquiler_lote_cliente_entrega,
+    alquiler_lote_cliente."cantidad_cuota" AS alquiler_lote_cliente_cantidad_cuota,
+    alquiler_lote_cliente."cod_cabecera" AS alquiler_lote_cliente_cod_cabecera,
+    cliente."barrio" AS cliente_barrio
+FROM
+    "public"."cliente" cliente
+INNER JOIN "public"."alquiler_lote_cliente" alquiler_lote_cliente ON cliente."cod_cliente" = alquiler_lote_cliente."cod_cliente"
+INNER JOIN "public"."lote" lote ON alquiler_lote_cliente."cod_lote" = lote."cod_lote"
+INNER JOIN "public"."manzana" manzana ON lote."cod_manzana" = manzana."cod_manzana"
+WHERE
+    alquiler_lote_cliente."cod_cabecera" = $P{CodAlquiler};
+]]>
+	</queryString>
+	<field name="total" class="java.lang.String"/>
+	<field name="nombre_apellido" class="java.lang.String"/>
+	<field name="ano" class="java.lang.String"/>
+	<field name="dia_semana" class="java.lang.String"/>
+	<field name="mes" class="java.lang.String"/>
+	<field name="alquiler_lote_cliente_fecha_inserto" class="java.lang.String"/>
+	<field name="cliente_nombres" class="java.lang.String"/>
+	<field name="cliente_apellidos" class="java.lang.String"/>
+	<field name="cliente_documento" class="java.lang.String"/>
+	<field name="cliente_direccion" class="java.lang.String"/>
+	<field name="cliente_ciudad" class="java.lang.String"/>
+	<field name="cliente_celular" class="java.lang.String"/>
+	<field name="lote_cant_dif_habilitados" class="java.lang.Integer"/>
+	<field name="lote_dimension" class="java.lang.String"/>
+	<field name="manzana_codigo" class="java.lang.String"/>
+	<field name="lote_numero_lote" class="java.lang.String"/>
+	<field name="lote_serie" class="java.lang.String"/>
+	<field name="alquiler_lote_cliente_cuota" class="java.lang.String"/>
+	<field name="alquiler_lote_cliente_entrega" class="java.lang.String"/>
+	<field name="alquiler_lote_cliente_cantidad_cuota" class="java.lang.Integer"/>
+	<field name="alquiler_lote_cliente_cod_cabecera" class="java.lang.Integer"/>
+	<field name="cliente_barrio" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="73">
+			<image>
+				<reportElement x="0" y="0" width="87" height="61" uuid="e2833483-a0d1-4439-8519-89d1f386307b"/>
+				<imageExpression><![CDATA[getClass().getResource("/imagenes/logoReport.png")]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="1" y="26" width="555" height="20" uuid="e8e86def-f432-4d70-a43c-6270ff28600e"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CONTRATO DE USUFUCTRO A PERPETUIDAD N° "+$F{alquiler_lote_cliente_cod_cabecera}+" / "+$F{alquiler_lote_cliente_fecha_inserto}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="649">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="555" height="117" uuid="538cc877-8a5e-4f62-baa7-fe79a2034e9c"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["En la ciudad de Limpio, a los " + $F{dia_semana} + " días del mes de " + $F{mes} + ", del año " + $F{ano} + ", entre el Condominio de Propietarios integrado por Fernando José Molinas Camps, Carolina Beatriz Molinas Camps, Guillermo Andrés Molinas Camps, Mónica Beatriz Molinas de Molas y Elvio Ramón Brizuela, con RUC N° 80048949-7, con domicilio en Pedro Melo de Portugal c/ San José, Limpio – Paraguay, de la ciudad de Limpio, en adelante LA EMPRESA, por una parte, y el/la Sr/a. " + $F{cliente_nombres} + " " + $F{cliente_apellidos} + " con Cédula de Identidad N° " + $F{cliente_documento} + " , domiciliado/a en la casa de la calle " + $F{cliente_direccion} + " Barrio " + $F{cliente_barrio} + " de la ciudad de " + $F{cliente_ciudad} + " con número de teléfono: " + $F{cliente_celular} + " en adelante EL/LA TITULAR, por la otra parte, convienen en formalizar el presente Contrato de Usufructo sobre un lote de terreno ubicado dentro del inmueble denominado CAMPOSANTO SANTA LIBRADA, de esta Ciudad Departamental, sujeto a las cláusulas siguientes:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="135" width="555" height="63" uuid="b802ed35-b5cc-4338-ba26-3017cbd38586"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["LA EMPRESA otorga a EL/LA TITULAR el Derecho de Usufructo sobre un lote de terreno cuyas medidas son en total " + $F{lote_dimension} + " (Dos coma cincuenta)metros de largo y 1(Uno) metro de ancho,  ubicado dentro del CAMPOSANTO, cuya capacidad no podrá superar " + $F{lote_cant_dif_habilitados} + " (Cuatro) inhumaciones superpuestas, individualizados internamente como Manzana " + $F{manzana_codigo} + " (Veintiocho) " + $F{lote_numero_lote} +  " Lote 1(Uno) " +  $F{lote_serie} + " B. Según plano de ubicación que forma parte integral de este Contrato como Anexo I. "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="198" width="555" height="18" uuid="66406de0-5568-4f7a-b7bb-188a5739b517"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SEGUNDA: La Forma de Pago podrá ser al Contado o Financiado:  "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="21" y="216" width="534" height="26" uuid="df5aa6a3-098a-40e9-a362-7f2e385c6e3e"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["-  Si fuere al Contado, EL/LA TITULAR se compromete a abonar a LA EMPRESA la suma de GUARANIES " + $F{total} + " Siete millones quinientos mil (Gs.7500000) "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="21" y="243" width="534" height="42" uuid="51eaad68-7835-436b-a6b8-66b8e9e1c005"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["-  Si fuere Financiado, EL/LA TITULAR deberá hacer una entrega inicial de GUARANIES " + $F{alquiler_lote_cliente_entrega} + " Un millón quinientos mil (Gs.1.500.000) y el saldo en " + $F{alquiler_lote_cliente_cantidad_cuota} + " 50 Cuotas de GUARANIES " + $F{alquiler_lote_cliente_cuota} + " Ciento cincuenta mil (Gs.150.000) cada una, abonando un precio total de GUARANIES " + $F{total} + " Nueve Millones(Gs.9000000). "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="285" width="555" height="76" uuid="0e7b29e3-0d73-4b17-822c-28fce3e71fea"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["En caso de una mora mayor a dos meses LA EMPRESA podrá, de conformidad con lo establecido en el Art. Nro. 782 del Código Civil, y para lo cual por este acto EL/LA TITULAR autoriza plenamente, a LA EMPRESA a declarar en forma unilateral la resolución de este contrato quedando el total de la suma abonada a favor de este en concepto de pago de comisiones e indemnizaciones por los trámites administrativos. En caso de ser aplicada esta cláusula, LA EMPRESA podrá disponer, sin necesidad de protesto alguno, nuevamente del sitio objeto de este contrato, renunciando EL/LA TITULAR a cualquier reclamo posterior sobre los derechos adquiridos por este documento. "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="361" width="555" height="68" uuid="0b535a7e-f2e4-4c66-94e9-32189177ba4e"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Así mismo, EL/LA TITULAR autoriza a LA EMPRESA, en caso de incurrir en mora tanto, a la consulta como a la inclusión en la base de datos de INFORMCONF conforme a lo establecido en la ley 1682, como también se pueda proveer la información a terceros interesados. Por el presente documento EL/LA TITULAR otorga suficiente autorización irrevocable para que LA EMPRESA por si y/o por medio de empresas especializadas recabe información referente a la situación patrimonial, solvencia económica o cumplimientos de las obligaciones de EL/LA TITULAR, si así lo decide."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="447" width="555" height="28" uuid="d6818a87-d110-46fb-845e-85e1fd1caf09"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["LA EMPRESA expedirá a nombre de EL/LA TITULAR un CERTIFICADO DE USUFRUCTO DE SITIO en un plazo no mayor a treinta días posteriores a la cancelación del precio estipulado más arriba."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="476" width="555" height="14" uuid="e99487ac-01ae-4eea-8012-6a311da0c6bc"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CUARTA: Mantenimiento"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="492" width="555" height="43" uuid="cdc13929-d7b9-4127-b7de-65d78d167ebd"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["EL/LA TITULAR se compromete a abonar a LA EMPRESA el cargo de Mantenimiento del lote cuyas especificaciones están indicadas en el “CONTRATO DE MANTENIMIENTO DE LOTE” correspondiente que declaran conocer y aceptar. Dicho contrato forma parte integral de este y se identifica como ANEXO II"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="535" width="555" height="30" uuid="b9c6c9e5-1282-4a51-b3ab-070dc9a503a1"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Cuando EL/LA TITULAR o sus herederos no abonen durante 2(dos) años consecutivos las tarifas de mantenimiento del cementerio, automáticamente cesará el contrato de usufructo y se procederá de la siguiente manera:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="27" y="565" width="528" height="46" uuid="e3498414-5e63-4096-8a77-ca3f6992e5ea"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["a)	LA EMPRESA quedará automáticamente autorizada para disponer del lote objeto de este contrato, previa intimación formulada durante noventa días contados a partir de la notificación hecha por cualquier medio, para el caso de que en la misma hubiere restos humanos, dichos restos serán trasladados y depositados al osario común."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="27" y="611" width="528" height="30" uuid="0c482d6f-616b-40de-bce0-2fba350f26ac"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["b)	LA EMPRESA podrá disponer libremente del bien desocupado. Sin perjuicio de ello, podrá reclamar las sumas adeudadas por la vía legal correspondiente."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="117" width="555" height="18" uuid="6c498f30-80ea-4743-8bc6-3fc446fd01f6"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PRIMERA:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="429" width="555" height="18" uuid="7024d040-0f7c-4f45-b1d4-3c85287bf948"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TERCERA:"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="766">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement positionType="Float" x="0" y="526" width="112" height="15" uuid="d57f268f-234b-4da8-a796-9aa0624d4ddc"/>
+				<textElement textAlignment="Justified">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DECIMA CUARTA:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="1" y="298" width="555" height="11" uuid="62b93d09-bf0a-40d7-90cb-448fc7406f2d"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["OCTAVA: Destino"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="27" y="66" width="530" height="14" uuid="79635a2e-fe18-4a0f-a89e-896916c0422d"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["a-) El Certificado de Usufructo de lote del sitio correspondiente en caso de haber cancelado el pago previsto en la Cláusula Segunda. " +
+"Si a la fecha de la solicitud de inhumación LA EMPRESA no le ha entregado a EL/LA TITULAR el Certificado de Usufructo de Lote, la sola presentación de la factura que demuestre la cancelación del pago será suficiente."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="21" y="385" width="534" height="10" uuid="6e9ca2b9-f2f9-4c7a-a936-d4d12911e5f8"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["d.)	LA EMPRESA por medio de cobro de la tarifa de mantenimiento, deberá conservar el predio en buenas condiciones, como así también la estética general del establecimiento."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="27" y="163" width="529" height="14" uuid="c02ade2e-7544-4100-bbfa-b045098718bf"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["a)	Firmar la Autorización de Inhumación correspondiente"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="21" y="405" width="534" height="11" uuid="84e8cde0-81e6-49ed-9209-06c044bc2283"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["f.)	LA EMPRESA se compromete a pagar el impuesto inmobiliario anual del lote en la Municipalidad de Limpio"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="1" y="262" width="555" height="15" uuid="5e58d50e-1f82-4911-9be2-1ae346da3ef0"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SEPTIMA: Representación"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="Float" x="317" y="699" width="185" height="1" uuid="0e24565b-afd3-46b5-b2b4-05e19b406f93"/>
+			</line>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="21" y="374" width="534" height="11" uuid="8050d698-6e17-42d1-a04c-a7d773af9b54"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["c.)	LA EMPRESA se reserva el derecho de proveer lugares dentro del predio para la instalación o construcción de monumentos, hornos crematorios y cualquier otra construcción o equipamiento para el buen uso y funcionamiento del mismo."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement positionType="Float" x="103" y="545" width="452" height="15" uuid="4bb0066a-9a6a-48f5-9717-60926afa0c66"/>
+				<textElement textAlignment="Justified">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Por este acto, las partes de común acuerdo manifiestan expresamente resolver el contrato de compra venta del lote de terreno dentro del inmueble del Cementerio Santa Librada celebrado anteriormente, quedando sin valor y efecto alguno. El mismo será sustituido por este nuevo Acuerdo, una aceptado y firmado por los mismos."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="59" y="667" width="185" height="20" uuid="a78c03c0-a2b8-4318-b2ff-11cfbdd2a125"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Firma,aclaración y C.I. TITULAR]]></text>
+			</staticText>
+			<line>
+				<reportElement positionType="Float" x="59" y="663" width="185" height="1" uuid="5f9ebed6-5ddd-4d99-a9b6-85168e2eef9e"/>
+			</line>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement positionType="Float" x="2" y="582" width="553" height="11" uuid="e1e529a0-d514-4115-a8ff-5f0ce9db14c0"/>
+				<textElement textAlignment="Justified">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Habiendo leído y entendido las Cláusulas del presente Contrato, las partes lo suscriben en prueba de conformidad y aceptación, en dos ejemplares de un mismo tenor y a un solo efecto, en el lugar y fecha arriba señalados."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="21" y="442" width="534" height="12" uuid="46e9964f-6c6c-480f-a97e-1f18f8e3407f"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["	La reparación de daños que se produzcan en el interior de los lotes o el deterioro que sufran los bienes y ornamentos que se encuentren en los lotes corren por exclusiva cuenta de EL/LA TITULAR."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement positionType="Float" x="104" y="563" width="451" height="15" uuid="0e62ddaf-a2d6-4977-805e-b177ebfb5b43"/>
+				<textElement textAlignment="Justified">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Las partes aceptan la Jurisdicción de los Jueces y Tribunales de la Ciudad de Asunción para dirimir cualquier diferencia sugerida de la interpretación de las cláusulas de este contrato. "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="27" y="177" width="529" height="29" uuid="fd406e18-f98c-4cff-90b7-c1b48c741743"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["b)	En caso de fallecimiento o ausencia de EL/LA TITULAR este trámite será realizado por una persona debidamente acreditada, quién asumirá la responsabilidad por este acto."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="27" y="80" width="530" height="16" uuid="758cc16b-04b5-4c8c-9f61-6203a6cbfbb4"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["b-) En caso que, la forma de pago sea financiado, se deberá tener pagado a la fecha de la solicitud de la inhumación por lo menos el equivalente al 25% del precio total final a abonarse de acuerdo al saldo de cuotas que quede pendiente de pago."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement positionType="Float" x="0" y="507" width="111" height="15" uuid="9c3e30d6-023e-402b-8b80-3e8d98cf865c"/>
+				<textElement textAlignment="Justified">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DECIMA TERCERA:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="2" y="15" width="555" height="17" uuid="5d39ba24-1fa3-4a82-8fec-6b4f9e92fb5a"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Rigen el interés, los ajustes y demás efectos de la mora tanto para las deudas por adquisición de derecho de usufructo sobre los lotes, así como para los gastos de mantenimiento." + 
+"Vencido el plazo de pago de cualquiera de las obligaciones a cargo de EL/LA TITULAR, se producirá la mora automática de Gs. 1.000- por cada día y los montos devengarán un interés mensual compensatorio y un interés punitorio fijado en la base del máximo establecido por el Banco Central del Paraguay." + 
+"Por el presente instrumento EL/LA TITULAR autoriza en forma expresa e irrevocable, otorgando suficiente mandato en los términos del Art. 917 inc. 'a' del Código Civil, para que en caso de mora superior a los noventa días en el pago de las cuotas, o de cualquier otra deuda pendiente que mantenga con LA EMPRESA, incluyan su nombre personal o Razón Social que representa en los registros de empresas especializadas al respecto. Esta autorización se extiende a fin de que pueda proveerse la información a terceros interesados. Una vez cancelada la deuda, gastos e intereses, la eliminación de dicho Registro se realizará de acuerdo a lo dispuesto en la Ley Nro. 1 ,682/01, y su modificatoria Ley, Nro. 1.969/02."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement positionType="Float" x="103" y="489" width="452" height="15" uuid="a920ba7a-2225-4f92-a65a-ea6c8f490754"/>
+				<textElement textAlignment="Justified">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["los gastos que se originen por motivo de la inscripción del presente contrato serán cubiertos por EL/LA TITULAR."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="1" y="332" width="555" height="10" uuid="0e902d6d-0d0a-40b9-b8a3-3b15b5ca11d8"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Para los actos que deban realizarse con motivo de inhumación, exhumación, reducción o traslados de cuerpos, restos y cenizas humanas, se requerirá el cumplimiento de las disposiciones que en la materia estén vigentes en la Municipalidad de Limpio."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="59" y="743" width="185" height="20" uuid="781c847a-ff47-4539-bc55-aa171ebacc46"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Firma del Administrador]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="1" y="145" width="555" height="14" uuid="dd10dd87-f7d4-46d6-b0d6-d9652a384f6f"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Así mismo deberá:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="21" y="363" width="534" height="11" uuid="410e9865-8caa-4242-a5fa-2bd8ef2585ce"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["b.)	Todos los servicios que se presten y cumplan dentro del ámbito del campo santo serán efectuados por personal designado por LA EMPRESA, cualquiera sea su naturaleza y sean con o sin cargo para EL/LA TITULAR. "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement positionType="Float" x="1" y="343" width="555" height="9" uuid="27709c2e-84a4-4532-a4c8-c429c4db2077"/>
+				<textElement textAlignment="Justified">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DECIMA: Servicios"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="1" y="321" width="555" height="11" uuid="678c077d-c58d-408a-91b4-3796e48cb9ca"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["NOVENA: Disposiciones Generales"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="37" width="555" height="15" uuid="3916c858-f48c-4956-b915-b3a50e82f6de"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SEXTA: Inhumaciones"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="21" y="352" width="534" height="11" uuid="45936685-ff0c-4f0c-b776-5b8fefc682a9"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["a.)	LA EMPRESA tiene dominio exclusivo de todos los terrenos del camposanto, incluyendo accesos, calles, paseos, camineros, aceras, capilla, velatorios, oficinas, sistema de alumbrados, riego, cercas, y demás mejoras sin perjuicio de los derechos de los usuarios sobre los lotes establecidos en este contrato."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement positionType="Float" x="0" y="471" width="111" height="15" uuid="0ecfa87e-cc37-4eee-a8d2-eeb8bb6f085a"/>
+				<textElement textAlignment="Justified">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DECIMA PRIMERA:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="21" y="395" width="534" height="10" uuid="6f6445ae-38cf-49c4-bc7a-5ff1f8cbeca1"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["e.)	Otros servicios adicionales y opcionales se abonan al momento de ser utilizados y sus valores se podrán consultar en la administración."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="1" y="309" width="555" height="12" uuid="bf4391ad-dd8e-4ab8-b43f-c416ab0be6f9"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["La inhumación de cuerpos, restos o cenizas humanas es el único destino que podrá darse a los lotes bajo condición de revocabilidad en caso de incumplimiento de las ordenanzas y reglamentos promulgados por el municipio y/o del presente reglamento."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement positionType="Float" x="104" y="471" width="452" height="15" uuid="91a0df8b-5b09-4549-83f8-780e7c4348fb"/>
+				<textElement textAlignment="Justified">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["el presente contrato surtirá efectos a partir de la fecha en que se suscribe, el mismo podrá ser revisado, modificado y/o adicionado, previo acuerdo de las partes, lo que en todo caso deberá hacer constar por escrito."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="2" y="0" width="555" height="15" uuid="5959acb6-da80-460d-b498-6a4edf2b1683"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["QUINTA: Mora"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="2" y="432" width="555" height="10" uuid="4700efd4-9499-4230-b3f8-6f434deef273"/>
+				<textElement textAlignment="Justified">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DAÑOS"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement positionType="Float" x="102" y="507" width="455" height="15" uuid="e03dea85-f8bc-4a39-a64d-c04dbd34cb01"/>
+				<textElement textAlignment="Justified">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["EL/LA TITULAR se comprometen a comunicar a LA EMPRESA cualquier cambio de domicilio y/o número telefónico. En caso de no hacerlo se tomará por válidas las notificaciones cursadas en el domicilio fijado en el presente contrato."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="27" y="110" width="530" height="20" uuid="b95c86e4-a3c7-44e1-923b-fcab44b53dd2"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["d-) Fotocopia del documento de identidad y el certificado original de defunción de la persona a ser inhumada."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="21" y="416" width="534" height="10" uuid="32e4458e-72b9-4c3e-9d95-31060ad31063"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["g.)	El salón velatorio podrá ser utilizado por EL/LA TITULAR con tarifas preferenciales."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement positionType="Float" x="0" y="545" width="113" height="15" uuid="bf0fb405-0a0a-4719-8ab7-131cdd273d88"/>
+				<textElement textAlignment="Justified">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DECIMA QUINTA:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="27" y="123" width="530" height="20" uuid="7c29034f-a4fc-4135-b120-293dc706a10d"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["e-) No adeudar suma alguna en concepto de Cargo de Mantenimiento de Lote o Gastos administrativos."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="317" y="703" width="185" height="20" uuid="9c278df0-a1eb-4c8b-92da-d13f078bcc2b"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Firma del Propietario]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="1" y="287" width="555" height="11" uuid="c92a4fb7-5741-43d4-a234-92525119aff5"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Así mismo, ante el fallecimiento de EL/LA TITULAR se cederán los derechos del presente contrato de usufructo a quien acredite su calidad de heredero con los derechos y obligaciones que emanan por este acto. "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement positionType="Float" x="0" y="563" width="110" height="15" uuid="563abb69-d97d-435a-b1f4-0b024dccaa01"/>
+				<textElement textAlignment="Justified">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DECIMA SEXTA:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="21" y="454" width="534" height="10" uuid="c9f3b06a-8738-4587-b9a6-4c70973b5ed2"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["	EL/LA TITULAR y los USUARIOS deberán cumplir con todas las normas y disposiciones que se estipulen en el REGLAMENTO INTERNO, en caso de incumplimiento de las mismas, LA EMPRESA se reserva el derecho a establecer compensaciones monetarias(multas) o incluso disolver el contrato presente en caso de que LA EMPRESA lo considere."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement positionType="Float" x="0" y="489" width="110" height="15" uuid="81816986-7162-420d-8ef8-54ceeca38aa0"/>
+				<textElement textAlignment="Justified">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DECIMA SEGUNDA:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="27" y="206" width="529" height="53" uuid="03d50894-8e27-44ea-8d6a-4aa285a8d3c6"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["c)	Para la utilización del lote se deberá abonar por concepto de acompañamiento fúnebre del personal de la empresa, cierre de panteón con revoqué fino y colocación de lapida (en caso de que se solicite). Por esos conceptos se deberá abonar la suma de GUARANIES Setecientos cincuenta mil (Gs.750.000), pudiendo este monto ser incrementado anualmente por parte de LA EMPRESA."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="1" y="277" width="555" height="10" uuid="1923eb6b-eb6d-44bf-8dec-fa1dce7503a1"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["En caso de haber más de un TITULAR para un mismo lote, los mismos deberán designar uno de entre ellos para que los represente ante LA EMPRESA a todos los efectos del presente y en especial para que suscriba la documentación requerida por el mismo y por las autoridades competentes para inhumación, exhumación, reducción y traslado de cuerpos, restos o cenizas humanas. "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement positionType="Float" x="102" y="526" width="455" height="15" uuid="30d20bdf-01da-4e23-b53f-a05d08a137dd"/>
+				<textElement textAlignment="Justified">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Horarios, Acceso y circulación: Acorde al REGLAMENTO INTERNO, que se encuentra anexo y EL/LA TITULAR declara conocer y aceptar."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="27" y="96" width="530" height="20" uuid="2917e595-c2ad-4240-8ca3-5e81aa7194a8"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["c-) Estar al día en el pago de las cuotas en caso que EL/LA TITULAR haya optado por la forma de pago financiado."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="52" width="555" height="13" uuid="8034b518-f778-4e5b-a477-b105a750ee08"/>
+				<textElement textAlignment="Justified" markup="none">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Para realizar inhumaciones en el lote correspondiente, las mismas deberán ser solicitadas de forma personal por EL/LA TITULAR, o por una persona autorizada por el mismo, con un mínimo de 12(doce) horas de anticipación a la hora estipulada para la ceremonia. EL/LA TITULAR o el responsable que solicite la apertura de la fosa deberá presentar en el momento de la solicitud los siguientes documentos:"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="Float" x="59" y="739" width="185" height="1" uuid="d48d893c-9d36-4cba-a2c6-6de377b54085"/>
+			</line>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="20">
+			<textField evaluationTime="Report">
+				<reportElement x="513" y="0" width="40" height="20" uuid="0e6235e7-c052-475e-b049-169acb9350b4"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="433" y="0" width="80" height="20" uuid="5511b7cc-cd3f-48d7-8926-fc594add2c4b"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

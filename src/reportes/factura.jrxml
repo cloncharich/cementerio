@@ -12,6 +12,7 @@
 	<queryString>
 		<![CDATA[SELECT
      cliente.nombres||' '||cliente.apellidos AS cliente_nombres,
+     det_venta.descripcion||' POR FECHA DE VENCIMIENTO '||TO_CHAR(det_venta.fecha_vencimiento,'DD/MM/YYYY') AS det_venta_descripcion,
      empresa."nombre" AS empresa_nombre,
      empresa."direccion" AS empresa_direccion,
      empresa."ciudad" AS empresa_ciudad,
@@ -39,7 +40,6 @@
      det_venta."fecha_inserto" AS det_venta_fecha_inserto,
      det_venta."cab_venta" AS det_venta_cab_venta,
      det_venta."cod_alquiler" AS det_venta_cod_alquiler,
-    det_venta.descripcion || ' POR FECHA DE VENCIMIENTO ' || TO_CHAR(det_venta.fecha_vencimiento, 'DD/MM/YYYY') AS      det_venta_descripcion,
      det_venta."fecha_vencimiento" AS det_venta_fecha_vencimiento,
      det_venta."cod_det_cobro" AS det_venta_cod_det_cobro,
      empresa."pais" AS empresa_pais,
@@ -49,15 +49,18 @@
      cliente."documento" AS cliente_documento,
      cliente."celular" AS cliente_celular,
      det_venta."iva" AS det_venta_iva,
-     det_venta."excentas" AS det_venta_excentas
+     det_venta."excentas" AS det_venta_excentas,
+     venta."tipo_condicion" AS venta_tipo_condicion
 FROM
      "public"."venta" venta INNER JOIN "public"."det_venta" det_venta ON venta."cab_venta" = det_venta."cab_venta"
      INNER JOIN "public"."timbrado" timbrado ON venta."cod_timbrado" = timbrado."cod_timbrado"
      INNER JOIN "public"."cliente" cliente ON venta."cod_cliente" = cliente."cod_cliente",
      "public"."empresa" empresa
-where venta.cab_venta=$P{venta}]]>
+WHERE
+     venta.cab_venta = $P{venta}]]>
 	</queryString>
 	<field name="cliente_nombres" class="java.lang.String"/>
+	<field name="det_venta_descripcion" class="java.lang.String"/>
 	<field name="empresa_nombre" class="java.lang.String"/>
 	<field name="empresa_direccion" class="java.lang.String"/>
 	<field name="empresa_ciudad" class="java.lang.String"/>
@@ -85,7 +88,6 @@ where venta.cab_venta=$P{venta}]]>
 	<field name="det_venta_fecha_inserto" class="java.sql.Timestamp"/>
 	<field name="det_venta_cab_venta" class="java.lang.Integer"/>
 	<field name="det_venta_cod_alquiler" class="java.lang.Integer"/>
-	<field name="det_venta_descripcion" class="java.lang.String"/>
 	<field name="det_venta_fecha_vencimiento" class="java.sql.Date"/>
 	<field name="det_venta_cod_det_cobro" class="java.lang.Integer"/>
 	<field name="empresa_pais" class="java.lang.String"/>
@@ -96,6 +98,7 @@ where venta.cab_venta=$P{venta}]]>
 	<field name="cliente_celular" class="java.lang.String"/>
 	<field name="det_venta_iva" class="java.lang.Long"/>
 	<field name="det_venta_excentas" class="java.lang.Long"/>
+	<field name="venta_tipo_condicion" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -353,6 +356,13 @@ where venta.cab_venta=$P{venta}]]>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cliente_documento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="431" y="135" width="100" height="16" uuid="e3d969cf-b992-486b-966c-83380bc8d99e"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{venta_tipo_condicion}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -627,7 +637,7 @@ where venta.cab_venta=$P{venta}]]>
 				</graphicElement>
 			</line>
 			<textField pattern="#,##0">
-				<reportElement x="78" y="9" width="100" height="18" uuid="de5e819c-7ffd-4ad6-a9af-6e2c031a72af"/>
+				<reportElement x="78" y="9" width="68" height="18" uuid="de5e819c-7ffd-4ad6-a9af-6e2c031a72af"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
@@ -646,6 +656,13 @@ where venta.cab_venta=$P{venta}]]>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{venta_total}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="146" y="9" width="265" height="19" uuid="573f8afb-985e-48fd-a25b-619f7075f5cd"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{montoLetras}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

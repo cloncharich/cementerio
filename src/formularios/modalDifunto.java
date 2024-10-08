@@ -52,6 +52,7 @@ public final class modalDifunto extends javax.swing.JInternalFrame {
         setResizable(false);
         ruta = PathPrincipal.obtenerPathStorage();
         contener_detalle.setVisible(false);
+         contener_detalle1.setVisible(false);
 
 
     }
@@ -262,6 +263,7 @@ public final class modalDifunto extends javax.swing.JInternalFrame {
                 btnFotoDocumento.setEnabled(false);
                 btnFotoServicios.setEnabled(false);
                 contener_detalle.setVisible(true);
+                contener_detalle1.setVisible(true);
                  btnBuscarCliente.setEnabled(false);
             }
             
@@ -279,11 +281,11 @@ public final class modalDifunto extends javax.swing.JInternalFrame {
 }
 
  
- void ImprimirReporte(){
+ void ImprimirReporte(String ruta){
       ReportPrinter reportPrinter = new ReportPrinter();
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("alquiler", cod_difunto);
-        reportPrinter.printReport("/reportes/SolicitudIngresoLote.jasper", parameters);
+        reportPrinter.printReport(ruta, parameters);
  }
 
     @SuppressWarnings("unchecked")
@@ -346,6 +348,8 @@ public final class modalDifunto extends javax.swing.JInternalFrame {
         residencia = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
         edad_difunto = new javax.swing.JTextField();
+        contener_detalle1 = new javax.swing.JPanel();
+        btnDetalle1 = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -572,7 +576,7 @@ public final class modalDifunto extends javax.swing.JInternalFrame {
         panelModalCliente.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 470, 500, 34));
 
         jLabel14.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
-        jLabel14.setText("Certificado de defunsion:");
+        jLabel14.setText("Certificado de defunción:");
         panelModalCliente.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 350, 200, 34));
 
         contener_guardar.setBackground(new java.awt.Color(80, 90, 100));
@@ -1021,7 +1025,7 @@ public final class modalDifunto extends javax.swing.JInternalFrame {
         btnDetalle.setBackground(new java.awt.Color(153, 204, 255));
         btnDetalle.setFont(new java.awt.Font("Roboto Medium", 1, 12)); // NOI18N
         btnDetalle.setForeground(new java.awt.Color(255, 255, 255));
-        btnDetalle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/printer.png"))); // NOI18N
+        btnDetalle.setText("INGRESO");
         btnDetalle.setBorder(null);
         btnDetalle.setContentAreaFilled(false);
         btnDetalle.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -1053,8 +1057,8 @@ public final class modalDifunto extends javax.swing.JInternalFrame {
         contener_detalleLayout.setHorizontalGroup(
             contener_detalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(contener_detalleLayout.createSequentialGroup()
-                .addComponent(btnDetalle, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addComponent(btnDetalle, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
         contener_detalleLayout.setVerticalGroup(
             contener_detalleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1063,7 +1067,7 @@ public final class modalDifunto extends javax.swing.JInternalFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        panelModalCliente.add(contener_detalle, new org.netbeans.lib.awtextra.AbsoluteConstraints(840, 660, 40, -1));
+        panelModalCliente.add(contener_detalle, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 660, 90, -1));
 
         jLabel19.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
         jLabel19.setText("Ciudad de Residencia:");
@@ -1106,6 +1110,55 @@ public final class modalDifunto extends javax.swing.JInternalFrame {
             }
         });
         panelModalCliente.add(edad_difunto, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 440, 190, 32));
+
+        contener_detalle1.setBackground(new java.awt.Color(80, 90, 100));
+
+        btnDetalle1.setBackground(new java.awt.Color(153, 204, 255));
+        btnDetalle1.setFont(new java.awt.Font("Roboto Medium", 1, 12)); // NOI18N
+        btnDetalle1.setForeground(new java.awt.Color(255, 255, 255));
+        btnDetalle1.setText("EXHUMACION");
+        btnDetalle1.setBorder(null);
+        btnDetalle1.setContentAreaFilled(false);
+        btnDetalle1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnDetalle1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnDetalle1.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                btnDetalle1FocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                btnDetalle1FocusLost(evt);
+            }
+        });
+        btnDetalle1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnDetalle1MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnDetalle1MouseExited(evt);
+            }
+        });
+        btnDetalle1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDetalle1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout contener_detalle1Layout = new javax.swing.GroupLayout(contener_detalle1);
+        contener_detalle1.setLayout(contener_detalle1Layout);
+        contener_detalle1Layout.setHorizontalGroup(
+            contener_detalle1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contener_detalle1Layout.createSequentialGroup()
+                .addComponent(btnDetalle1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        contener_detalle1Layout.setVerticalGroup(
+            contener_detalle1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(contener_detalle1Layout.createSequentialGroup()
+                .addComponent(btnDetalle1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        panelModalCliente.add(contener_detalle1, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 660, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -1212,7 +1265,7 @@ public final class modalDifunto extends javax.swing.JInternalFrame {
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         if (Formato.verificarCampos(getContentPane()) == true) {
             GrabarDatos();
-            ImprimirReporte();
+            //ImprimirReporte();
         } else {
             JOptionPane.showMessageDialog(this, "Debe ingresar todos los campos", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         }         // TODO add your handling code here:
@@ -1245,16 +1298,18 @@ public final class modalDifunto extends javax.swing.JInternalFrame {
         String sql = "SELECT a.cod_cabecera,\n"
                 + "CONCAT(t.nombres, ' ', t.apellidos) AS cliente_nombre,\n"
                 + "CONCAT(m.codigo, '-', l.numero_lote, '-', l.serie) AS lote_numero,\n"
-                + "TO_CHAR(CAST(t.documento AS NUMERIC), 'FM999G999G999G990') AS doc_cliente,\n"
+                + "t.documento AS doc_cliente,\n"
                 + "t.celular\n"
                 + "FROM alquiler_lote_cliente AS a\n"
                 + "INNER JOIN cliente AS t ON t.cod_cliente = a.cod_cliente\n"
                 + "INNER JOIN lote AS l ON l.cod_lote = a.cod_lote\n"
                 + "INNER JOIN manzana AS m ON m.cod_manzana = l.cod_manzana\n"
                 + "where a.estado_registro='A' and EXISTS (select 1 from detalle_lote dt where dt.cod_lote=l.cod_lote\n"
-                + "											   and dt.estado_registro='L') and t.documento like ";
+                + "and dt.estado_registro='L') and t.documento like ";
+        
+         String[] searchColumns = {"t.documento", "t.nombres", "t.apellidos"};
 
-        buscador pp = new buscador(sql, new String[]{"Codigo Alquiler", "Titular", "Numero Lote", "Documento", "Celular "}, 5, tfParam, "Order by cod_cabecera");
+        buscadorLote pp = new buscadorLote(sql, new String[]{"Codigo Alquiler", "Titular", "Numero Lote", "Documento", "Celular "}, 5, tfParam, "Order by cod_cabecera",searchColumns);
         Dimension desktopSize = principalMenu.escritorio.getSize();
         Dimension FrameSize = pp.getSize();
         pp.setLocation((desktopSize.width - FrameSize.width) / 2, (desktopSize.height - FrameSize.height) / 4);
@@ -1484,7 +1539,7 @@ EventoTecladoUtil.permitirSoloDigitos(evt);        // TODO add your handling cod
     }//GEN-LAST:event_btnDetalleMouseExited
 
     private void btnDetalleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetalleActionPerformed
-ImprimirReporte();
+ImprimirReporte("/reportes/SolicitudIngresoLote.jasper");
         // TODO add your handling code here:
     }//GEN-LAST:event_btnDetalleActionPerformed
 
@@ -1512,6 +1567,26 @@ EventoTecladoUtil.convertirAMayusculas(evt);        // TODO add your handling co
 EventoTecladoUtil.permitirSoloDigitos(evt);        // TODO add your handling code here:
     }//GEN-LAST:event_edad_difuntoKeyTyped
 
+    private void btnDetalle1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnDetalle1FocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnDetalle1FocusGained
+
+    private void btnDetalle1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnDetalle1FocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnDetalle1FocusLost
+
+    private void btnDetalle1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDetalle1MouseEntered
+contener_detalle1.setBackground(new Color(51, 51, 51));          // TODO add your handling code here:
+    }//GEN-LAST:event_btnDetalle1MouseEntered
+
+    private void btnDetalle1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDetalle1MouseExited
+ contener_detalle1.setBackground(new Color(80, 90, 100));         // TODO add your handling code here:
+    }//GEN-LAST:event_btnDetalle1MouseExited
+
+    private void btnDetalle1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetalle1ActionPerformed
+ImprimirReporte("/reportes/ExhumacionLote.jasper");        // TODO add your handling code here:
+    }//GEN-LAST:event_btnDetalle1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public static javax.swing.JTextField alquiler_cod;
@@ -1521,6 +1596,7 @@ EventoTecladoUtil.permitirSoloDigitos(evt);        // TODO add your handling cod
     public static javax.swing.JButton btnBuscarCliente;
     public static javax.swing.JButton btnCancelar;
     public static javax.swing.JButton btnDetalle;
+    public static javax.swing.JButton btnDetalle1;
     public static javax.swing.JButton btnFotoDocumento;
     public static javax.swing.JButton btnFotoServicios;
     public static javax.swing.JButton btnGuardar;
@@ -1530,6 +1606,7 @@ EventoTecladoUtil.permitirSoloDigitos(evt);        // TODO add your handling cod
     public static javax.swing.JPanel contener_buscarCliente;
     public static javax.swing.JPanel contener_cancelar;
     public static javax.swing.JPanel contener_detalle;
+    public static javax.swing.JPanel contener_detalle1;
     public static javax.swing.JPanel contener_fotoDocumento;
     public static javax.swing.JPanel contener_guardar;
     public static javax.swing.JPanel contener_salir;

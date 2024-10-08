@@ -50,18 +50,18 @@ public final class tablaMorosos extends javax.swing.JInternalFrame {
         modelo1.addColumn("Codigo");
         modelo1.addColumn("Titular");
         modelo1.addColumn("Documento");
+         modelo1.addColumn("Lote");
+        modelo1.addColumn("Concepto");
+        modelo1.addColumn("Cantidad en Mora");
+        modelo1.addColumn("Total Monto");
         modelo1.addColumn("Desde");
-        modelo1.addColumn("Refinanciación Pendiente");
-        modelo1.addColumn("Cuota Pendiente");
-        modelo1.addColumn("Mantenimiento Pediente");
-        modelo1.addColumn("Reconstrucción pendiente");
-        modelo1.addColumn("Total Monto Mora");
+        modelo1.addColumn("Total General");
         modelo1.addColumn("Accion");
         tbl_morosos.setModel(modelo1);
         String sql = "select * from fn_resumen_moras_y_montos() where primer_vencimiento_mora is not null";
 
         if (!valor.equals("")) {
-            sql += " and (documento_cliente LIKE '%" + valor + "%' or nombre_completo_cliente LIKE '%" + valor + "%')";
+            sql += " and (documento_cliente LIKE '%" + valor + "%' or nombre_completo_cliente LIKE '%" + valor + "%'or lote_numero LIKE '%" + valor + "%')";
         } else {
             sql += " order by cod_alquiler ASC";
         }
@@ -76,12 +76,12 @@ public final class tablaMorosos extends javax.swing.JInternalFrame {
                 datos[0] = rs.getString(1);
                 datos[1] = rs.getString(2);
                 datos[2] = rs.getString(3);
-                datos[3] = rs.getString(12);
-                datos[4] = "Cant.Cuota: " + rs.getString(6) + " / Monto Total: " + rs.getString(7);
-                datos[5] = "Cant.Cuota: " + rs.getString(4) + " / Monto Total: " + rs.getString(5);
-                datos[6] = "Cant.Cuota: " + rs.getString(8) + " / Monto Total: " + rs.getString(9);
-                datos[7] = "Cant.Cuota: " + rs.getString(10) + " / Monto Total: " + rs.getString(11);
-                datos[8] = rs.getString(13);
+                datos[3] = rs.getString(9);
+                datos[4] = rs.getString(4);
+                datos[5] =rs.getString(5);
+                datos[6] = rs.getString(6);
+                datos[7] =  rs.getString(7);
+                datos[8] =  rs.getString(8);
 
                 modelo1.addRow(datos);
             }
@@ -102,7 +102,7 @@ public final class tablaMorosos extends javax.swing.JInternalFrame {
                     Dimension FrameSize = c.getSize();
                     c.setLocation((desktopSize.width - FrameSize.width) / 2, (desktopSize.height - FrameSize.height) / 6);
                     c.show();
-                    c.mostrarTabla(Integer.parseInt(tbl_morosos.getValueAt(row, 0).toString()), "ver");
+                    c.mostrarTabla(Integer.parseInt(tbl_morosos.getValueAt(row, 0).toString()), "ver",1000);
 
                 }
 
@@ -122,14 +122,14 @@ public final class tablaMorosos extends javax.swing.JInternalFrame {
             });
 
             searchText1.requestFocus();
-            tbl_morosos.getColumnModel().getColumn(0).setPreferredWidth(25);
+           /* tbl_morosos.getColumnModel().getColumn(0).setPreferredWidth(25);
             tbl_morosos.getColumnModel().getColumn(1).setPreferredWidth(200);
             tbl_morosos.getColumnModel().getColumn(2).setPreferredWidth(25);
             tbl_morosos.getColumnModel().getColumn(3).setPreferredWidth(30);
             tbl_morosos.getColumnModel().getColumn(4).setPreferredWidth(180);
             tbl_morosos.getColumnModel().getColumn(5).setPreferredWidth(180);
             tbl_morosos.getColumnModel().getColumn(6).setPreferredWidth(180);
-            tbl_morosos.getColumnModel().getColumn(7).setPreferredWidth(180);
+            tbl_morosos.getColumnModel().getColumn(7).setPreferredWidth(180);*/
 
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex);
@@ -320,7 +320,7 @@ public final class tablaMorosos extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_searchText1ActionPerformed
 
     private void searchText1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchText1KeyTyped
-        EventoTecladoUtil.permitirMayusculasYNumeros(evt);         // TODO add your handling code here:
+        EventoTecladoUtil.permitirMayusculasYNumerosEspacios(evt);         // TODO add your handling code here:
     }//GEN-LAST:event_searchText1KeyTyped
 
 

@@ -61,7 +61,7 @@ public final class tablaLote extends javax.swing.JInternalFrame {
                 + "from lote as l\n"
                 + "inner join manzana as m on m.cod_manzana=l.cod_manzana";
         if (!valor.equals("")) {
-            sql += " where l.numero_lote like '%" + valor + "%' or l.estado_registro like '%" + valor + "%' or l.cta_catastral like '%" + valor + "%'  or m.codigo like '%" + valor + "%'";
+            sql += " where CONCAT(m.codigo, '-', l.numero_lote, '-', l.serie) like '%" + valor + "%' or l.estado_registro like '%" + valor + "%' or l.cta_catastral like '%" + valor + "%'  or m.codigo like '%" + valor + "%'";
         } else {
             sql += " order by l.cod_lote ASC";
         }

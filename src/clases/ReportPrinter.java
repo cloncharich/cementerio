@@ -35,6 +35,7 @@ public class ReportPrinter {
 
         } catch (JRException e) {
             JOptionPane.showMessageDialog(null, "Error al mostrar el reporte: " + e.getMessage());
+            System.out.println( e.getMessage());
         } catch (SQLException e) {
             Logger.getLogger(ReportPrinter.class.getName()).log(Level.SEVERE, null, e);
         }

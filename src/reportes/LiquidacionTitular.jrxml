@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8715ec29-ce5b-41ab-9728-3ace2cd8c8ca">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="alquiler" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    cliente."nombres" || ' ' || cliente.apellidos AS cliente_nombres,
+    CASE 
+        WHEN cobros."estado_registro" = 'N' THEN 'No pagado'
+        WHEN cobros."estado_registro" = 'P' THEN 'Pagado'
+    END AS Estado,
+    manzana."codigo" || '-' || lote."numero_lote" || '-' || lote."serie" AS lote,
+    (
+        SELECT COALESCE(SUM(c2."monto"), 0) 
+        FROM "public"."cobros" c2 
+        WHERE c2."cod_alquiler" = alquiler_lote_cliente."cod_cabecera" and c2.tipo_cobro=1
+    ) AS suma_monto,
+    
+    (
+        SELECT COALESCE(SUM(c2."monto"), 0) 
+        FROM "public"."cobros" c2 
+        WHERE c2."cod_alquiler" = alquiler_lote_cliente."cod_cabecera" and c2.tipo_cobro=1 and c2.estado_registro='N'
+    ) AS saldo,
+    cliente."documento" AS cliente_documento,
+    cliente."celular" AS cliente_celular,
+    alquiler_lote_cliente."cod_cabecera" AS alquiler_lote_cliente_cod_cabecera,
+    alquiler_lote_cliente."tipo" AS alquiler_lote_cliente_tipo,
+    alquiler_lote_cliente."es_refinanciado" AS alquiler_lote_cliente_es_refinanciado,
+    alquiler_lote_cliente."cuota_cant_ref" AS alquiler_lote_cliente_cuota_cant_ref,
+    alquiler_lote_cliente."cantidad_cuota" AS alquiler_lote_cliente_cantidad_cuota,
+    cobros."fecha_cobro" AS cobros_fecha_cobro,
+    cobros."monto" AS cobros_monto,
+    cobros."concepto" AS cobros_concepto,
+    cobros."fecha_vencimiento" AS cobros_fecha_vencimiento,
+    alquiler_lote_cliente."entrega" AS alquiler_lote_cliente_entrega,
+    lote."numero_lote" AS lote_numero_lote,
+    manzana."codigo" AS manzana_codigo,
+    lote."serie" AS lote_serie,
+    cobros."tipo_cobro" AS cobros_tipo_cobro
+FROM
+    "public"."cliente" cliente
+    INNER JOIN "public"."alquiler_lote_cliente" alquiler_lote_cliente 
+        ON cliente."cod_cliente" = alquiler_lote_cliente."cod_cliente"
+    INNER JOIN "public"."cobros" cobros 
+        ON alquiler_lote_cliente."cod_cabecera" = cobros."cod_alquiler"
+    INNER JOIN "public"."lote" lote 
+        ON alquiler_lote_cliente."cod_lote" = lote."cod_lote"
+    INNER JOIN "public"."manzana" manzana 
+        ON lote."cod_manzana" = manzana."cod_manzana"
+WHERE
+    alquiler_lote_cliente."cod_cabecera" = $P{alquiler}
+    AND cobros."tipo_cobro" IN (1, 2, 5)
+order by cobros."fecha_vencimiento" ASC]]>
+	</queryString>
+	<field name="cliente_nombres" class="java.lang.String"/>
+	<field name="estado" class="java.lang.String"/>
+	<field name="lote" class="java.lang.String"/>
+	<field name="suma_monto" class="java.math.BigDecimal"/>
+	<field name="saldo" class="java.math.BigDecimal"/>
+	<field name="cliente_documento" class="java.lang.String"/>
+	<field name="cliente_celular" class="java.lang.String"/>
+	<field name="alquiler_lote_cliente_cod_cabecera" class="java.lang.Integer"/>
+	<field name="alquiler_lote_cliente_tipo" class="java.lang.String"/>
+	<field name="alquiler_lote_cliente_es_refinanciado" class="java.lang.String"/>
+	<field name="alquiler_lote_cliente_cuota_cant_ref" class="java.lang.Integer"/>
+	<field name="alquiler_lote_cliente_cantidad_cuota" class="java.lang.Integer"/>
+	<field name="cobros_fecha_cobro" class="java.sql.Timestamp"/>
+	<field name="cobros_monto" class="java.lang.Long"/>
+	<field name="cobros_concepto" class="java.lang.String"/>
+	<field name="cobros_fecha_vencimiento" class="java.sql.Date"/>
+	<field name="alquiler_lote_cliente_entrega" class="java.lang.Long"/>
+	<field name="lote_numero_lote" class="java.lang.String"/>
+	<field name="manzana_codigo" class="java.lang.String"/>
+	<field name="lote_serie" class="java.lang.String"/>
+	<field name="cobros_tipo_cobro" class="java.lang.Integer"/>
+	<variable name="cobros_monto_1" class="java.lang.Long" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{cobros_monto}]]></variableExpression>
+	</variable>
+	<variable name="cobros_fecha_vencimiento_1" class="java.lang.Integer" resetType="Page" calculation="Count">
+		<variableExpression><![CDATA[$F{cobros_fecha_vencimiento}]]></variableExpression>
+	</variable>
+	<variable name="contador" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[($F{cobros_tipo_cobro}==1 ? 1 : 0)]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="203" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="10" y="26" width="555" height="20" uuid="2bfe76f1-770f-4c10-8c18-9169cb95502a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[LIQUIDACIÓN DE CRÉDITO]]></text>
+			</staticText>
+			<rectangle radius="10">
+				<reportElement x="10" y="85" width="545" height="94" uuid="2d59a079-8d03-4535-a9a6-6dfeadc2bc0a"/>
+			</rectangle>
+			<textField>
+				<reportElement x="95" y="117" width="234" height="20" uuid="0463908b-25b1-4cc1-a9c0-a9d82822c6b5"/>
+				<textFieldExpression><![CDATA[$F{cliente_nombres}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="95" y="96" width="177" height="20" uuid="1c96fc48-31cf-41bf-a852-db51270d2c85"/>
+				<textFieldExpression><![CDATA[$F{cliente_documento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="95" y="138" width="141" height="20" uuid="7f1fde6b-f555-4e2c-9b0e-150a3bed0249"/>
+				<textFieldExpression><![CDATA[$F{cliente_celular}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="24" y="96" width="100" height="20" uuid="0b4d9664-9f69-4a93-a3bf-6457e273c20d"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Documento:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="24" y="117" width="100" height="20" uuid="cb51b388-9408-44e4-97c2-5c716bad2435"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Titular:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="24" y="138" width="100" height="20" uuid="d03108ac-8ce2-4c09-b9cb-f2c64dd23e16"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Celular:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="350" y="96" width="52" height="20" uuid="50089601-6a24-4e9f-b506-a19d2a713b10"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Moneda:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="436" y="96" width="100" height="20" uuid="aa35a388-94ec-4a2d-9343-6d45df8cc6fe"/>
+				<text><![CDATA[Guaranies]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="351" y="117" width="64" height="20" uuid="5222f0ed-c36a-4937-bbfc-86d837d0d0d6"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Monto Total:]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement x="436" y="159" width="100" height="20" uuid="99315473-3401-4a3b-9041-e95ffa9359e8"/>
+				<textFieldExpression><![CDATA[$F{alquiler_lote_cliente_entrega}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="352" y="159" width="78" height="20" uuid="a7420573-6176-4fc3-93f2-4218a567148c"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Entrega inicial:]]></text>
+			</staticText>
+			<image>
+				<reportElement x="0" y="0" width="87" height="61" uuid="ae0e9151-b5cd-4293-8375-35a5e1d5d815"/>
+				<imageExpression><![CDATA[getClass().getResource("/imagenes/logoReport.png")]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="95" y="159" width="100" height="20" uuid="2ae7837c-d632-47d2-a7e1-59e76a9d2231"/>
+				<textFieldExpression><![CDATA[$F{lote}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="24" y="159" width="100" height="20" uuid="0c4de052-0687-42bf-9e16-2243490eb48b"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Lote:]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement x="436" y="118" width="100" height="20" uuid="a59ac987-6371-4702-9085-ac1250f41891"/>
+				<textFieldExpression><![CDATA[$F{suma_monto}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="455" y="0" width="100" height="20" uuid="ae713a5c-862b-48bb-b9e4-490bfccdbe3e"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="352" y="138" width="84" height="20" uuid="b400f284-80be-4c84-b41f-8696b8da0ff1"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saldo Pendiente:]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement x="436" y="139" width="100" height="20" uuid="f349c0f9-7af6-4159-95dc-40ec3b39471c"/>
+				<textFieldExpression><![CDATA[$F{saldo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement x="99" y="1" width="100" height="20" uuid="89a3dc0d-723c-4835-bca3-496c048795bc"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Concepto:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="199" y="1" width="100" height="20" uuid="56bd6391-3adf-457f-a8de-85745367135c"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Monto:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="299" y="1" width="116" height="20" uuid="d77604a0-52f1-402a-9333-3bb616ec6a3a"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha de Vencimiento:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="415" y="1" width="100" height="20" uuid="3d6fce60-7742-46dd-b488-9d2b22067044"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Estado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="44" y="1" width="55" height="20" uuid="7f1b6009-a426-45bd-b803-577de72d8467"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Item:]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="99" y="0" width="100" height="20" uuid="a8d07f63-5991-4866-89c7-1e268dce19a7"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{cobros_concepto}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="199" y="0" width="100" height="20" uuid="c05b03b1-5073-4cf5-b258-2e8b1567746c"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{cobros_monto}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="299" y="0" width="116" height="20" uuid="f841c8e9-29d6-4cdf-bc28-9ea293452542"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{cobros_fecha_vencimiento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="415" y="0" width="100" height="20" uuid="04d7a155-51b3-4c95-8017-769bb48bfe91"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{estado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="44" y="0" width="55" height="20" uuid="bb87a636-c073-486c-bf05-96741f38e10d"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{contador}== 0 ? "" : $V{contador}.toString()]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="26" splitType="Stretch">
+			<textField>
+				<reportElement x="434" y="0" width="80" height="20" uuid="25f3086b-9df3-4b64-ba07-00d86e871923"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Pagina "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="514" y="0" width="40" height="20" uuid="f42326a6-62b4-4348-8ad7-35a52326ab7a"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

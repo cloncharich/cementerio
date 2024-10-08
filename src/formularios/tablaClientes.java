@@ -71,13 +71,7 @@ public final class tablaClientes extends javax.swing.JInternalFrame {
                 for (int i = 0; i < 5; i++) {
                     datos[i] = rs.getString(i + 1);
                 }
-                try {
-                    double doc = Double.parseDouble(datos[3]); 
-                    datos[3] = formateador.format(doc);
-                } catch (NumberFormatException e) {
-                    // Manejar la excepción si no se puede convertir a número
-                    datos[3] = "Valor no válido";
-                }
+              
                 modelo1.addRow(datos);
             }
             tbl_cli.setModel(modelo1);

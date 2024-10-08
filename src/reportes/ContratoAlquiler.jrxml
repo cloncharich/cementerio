@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b8def469-1082-40b7-a773-f22c718057d5">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="fecha_insercion" class="java.lang.String"/>
+	<field name="hora_inserto" class="java.lang.String"/>
+	<field name="cod_difunto" class="java.lang.Integer"/>
+	<field name="nombres" class="java.lang.String"/>
+	<field name="documento" class="java.lang.String"/>
+	<field name="fecha_muerte" class="java.lang.String"/>
+	<field name="fecha_nacimiento" class="java.lang.String"/>
+	<field name="nacionalidad" class="java.lang.String"/>
+	<field name="lugar_nacimiento" class="java.lang.String"/>
+	<field name="nro_cer_defucion" class="java.lang.String"/>
+	<field name="motivo_deceso" class="java.lang.String"/>
+	<field name="residencia" class="java.lang.String"/>
+	<field name="edad_difunto" class="java.lang.Integer"/>
+	<field name="sexo" class="java.lang.String"/>
+	<field name="numero_lote" class="java.lang.String"/>
+	<field name="manzana" class="java.lang.String"/>
+	<field name="cod_alquiler" class="java.lang.Integer"/>
+	<field name="nombre_completo_cliente" class="java.lang.String"/>
+	<field name="doc_cliente" class="java.lang.String"/>
+	<field name="celular" class="java.lang.String"/>
+	<field name="fec_titular" class="java.sql.Date"/>
+	<field name="edad" class="java.lang.Integer"/>
+	<field name="direccion" class="java.lang.String"/>
+	<field name="ciudad" class="java.lang.String"/>
+	<field name="barrio" class="java.lang.String"/>
+	<field name="email" class="java.lang.String"/>
+	<field name="familiar_relacionado" class="java.lang.String"/>
+	<field name="telefono_familiar" class="java.lang.String"/>
+	<field name="nac_titular" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="802" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="16" width="555" height="20" uuid="8be3e9ba-dd70-4608-80eb-02a8d5f6a404"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[CONTRATO DE ALQUILER A PERPETUIDAD N°3]]></text>
+			</staticText>
+			<image>
+				<reportElement x="6" y="1" width="87" height="61" uuid="59d90901-fc6a-4183-989d-f7396d1e550c"/>
+				<imageExpression><![CDATA[getClass().getResource("/imagenes/logoReport.png")]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="74" y="122" width="32" height="20" uuid="d5177300-48e2-4849-a992-9773d120166f"/>
+				<text><![CDATA[nelson alvarez]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+</jasperReport>

@@ -81,7 +81,7 @@ public final class tablaDifunto extends javax.swing.JInternalFrame {
                 + "INNER JOIN\n"
                 + "	manzana as m on m.cod_manzana=l.cod_manzana ";
         if (!valor.equals("")) {
-            sql += " where al.estado_registro='A' and (d.documento LIKE '%" + valor + "%' or d.nombres LIKE '%" + valor + "%' or d.apellidos LIKE '%" + valor + "%') ";
+            sql += " where al.estado_registro='A' and (d.documento LIKE '%" + valor + "%' or d.nombres LIKE '%" + valor + "%' or numero_lote LIKE '%" + valor + "%') ";
         } else {
             sql += "where al.estado_registro='A' order by cod_difunto ASC";
         }
@@ -473,7 +473,7 @@ public final class tablaDifunto extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_searchText1ActionPerformed
 
     private void searchText1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchText1KeyTyped
-        EventoTecladoUtil.permitirMayusculasYNumeros(evt);         // TODO add your handling code here:
+        EventoTecladoUtil.permitirMayusculasYNumerosEspacios(evt);         // TODO add your handling code here:
     }//GEN-LAST:event_searchText1KeyTyped
 
 

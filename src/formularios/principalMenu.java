@@ -6,10 +6,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyVetoException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
@@ -43,6 +46,7 @@ public final class principalMenu extends javax.swing.JFrame {
         usuarioBase = userBase;
         contrasena = contrasenaBase;
         usuario.setText(" Usuario: <<" + usuarioBase + ">> Version 1.0.0 Sistema de Gestión para Cementerio");
+        mostrarPaneles();
 
     }
 
@@ -100,6 +104,25 @@ public final class principalMenu extends javax.swing.JFrame {
             frame.dispose();
         }
     }
+    
+    
+     void mostrarPaneles(){
+        cerrarInternal();
+        try {
+            modalPaneles c = new modalPaneles();
+            c.dispose();
+            escritorio.add(c);
+            Dimension desktopSize = principalMenu.escritorio.getSize();
+            Dimension FrameSize = c.getSize();
+            c.setLocation((desktopSize.width - FrameSize.width) / 2, (desktopSize.height - FrameSize.height) / 2);
+            c.show();
+            c.setMaximum(true);
+
+        } catch (PropertyVetoException ex) {
+            Logger.getLogger(principalMenu.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -1044,11 +1067,11 @@ public final class principalMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnClienteMouseEntered
 
     private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
-
+ mostrarPaneles();
     }//GEN-LAST:event_jLabel3MouseClicked
 
     private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
-
+ mostrarPaneles();
     }//GEN-LAST:event_jLabel4MouseClicked
 
     private void btnManzanaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnManzanaMouseEntered

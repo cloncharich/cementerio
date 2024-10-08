@@ -43,18 +43,9 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
         anulacion.setVisible(false);
         contener_detalle.setVisible(false);
 
-
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 documento_titular.requestFocusInWindow();
-            }
-        });
-
-        documento_titular.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                Formato.NomenclaturaNumero(documento_titular);
-
             }
         });
 
@@ -85,7 +76,7 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
     }
 
     private void BuscarTitular(String valor) {
-        String query = "select TO_CHAR(CAST(documento AS numeric), 'FM999G999G999G990') AS documento,"
+        String query = "select documento AS documento,"
                 + "CONCAT(cod_cliente,'-',nombres, ' ', apellidos) AS cliente_nombre from cliente\n"
                 + "where documento='" + valor + "';";
         int contador = 0;
@@ -495,7 +486,7 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
         panelModalCliente.add(monto_cuota, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, 310, 32));
 
         documento_titular.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        documento_titular.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(java.text.NumberFormat.getIntegerInstance())));
+        documento_titular.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
         documento_titular.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 documento_titularFocusGained(evt);
@@ -955,19 +946,22 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnBuscarClienteMouseExited
 
     private void btnBuscarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarClienteActionPerformed
-        JTextField[] tfParam = new JTextField[2];
+           JTextField[] tfParam = new JTextField[2];
         tfParam[0] = documento_titular;
         tfParam[1] = titular;
 
-        String sql = "select TO_CHAR(CAST(documento AS numeric), 'FM999G999G999G990') AS documento,"
-                + "CONCAT(cod_cliente,'-',nombres, ' ', apellidos) AS cliente_nombre from cliente\n"
-                + "where apellidos like ";
+// Modifica la consulta SQL base
+        String sql = "select documento AS documento,"
+                + "CONCAT(cod_cliente,'-',nombres, ' ', apellidos) AS cliente_nombre from cliente";
 
-        buscador pp = new buscador(sql, new String[]{"Documento", "Titular"}, 2, tfParam, "Order by cod_cliente");
+// Especifica las columnas donde se realizará la búsqueda
+        String[] searchColumns = {"documento", "nombres", "apellidos"};
+
+        buscador pp = new buscador(sql, new String[]{"Documento", "Titular"}, 2, tfParam, "Order by cod_cliente", searchColumns);
         Dimension desktopSize = principalMenu.escritorio.getSize();
         Dimension FrameSize = pp.getSize();
         pp.setLocation((desktopSize.width - FrameSize.width) / 2, (desktopSize.height - FrameSize.height) / 4);
-        pp.setVisible(true);         // TODO add your handling code here:
+        pp.setVisible(true);       // TODO add your handling code here:
     }//GEN-LAST:event_btnBuscarClienteActionPerformed
 
     private void btnBuscarLoteFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnBuscarLoteFocusGained
@@ -990,16 +984,19 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
         JTextField[] tfParam = new JTextField[1];
         tfParam[0] = lote_cod;
 
-        String sql = "  select  CONCAT(l.cod_lote,') ',m.codigo, '-', l.numero_lote, '-', l.serie) AS lote_numero\n"
-                + "  from lote as l\n"
-                + "   INNER JOIN manzana AS m ON m.cod_manzana = l.cod_manzana\n"
-                + "   where l.estado_registro='L' and l.numero_lote like";
+        String sql = "SELECT (l.cod_lote || ') ' || m.codigo || '-' || l.numero_lote || '-' || l.serie) AS lote_numero "
+                + "FROM lote AS l "
+                + "INNER JOIN manzana AS m ON m.cod_manzana = l.cod_manzana "
+                + "WHERE l.estado_registro = 'L' ";
 
-        buscador pp = new buscador(sql, new String[]{"Lotes Libres"}, 1, tfParam, "Order by l.cod_lote");
+        sql += " AND m.codigo || '-' || l.numero_lote || '-' || l.serie LIKE  ";
+
+        buscadorLote pp = new buscadorLote(sql, new String[]{"Lotes Libres"}, 1, tfParam, "ORDER BY l.cod_lote", new String[]{"lote_numero"});
+
         Dimension desktopSize = principalMenu.escritorio.getSize();
         Dimension FrameSize = pp.getSize();
         pp.setLocation((desktopSize.width - FrameSize.width) / 2, (desktopSize.height - FrameSize.height) / 4);
-        pp.setVisible(true);        // TODO add your handling code here:
+        pp.setVisible(true);       // TODO add your handling code here:
     }//GEN-LAST:event_btnBuscarLoteActionPerformed
 
     private void documento_titularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_documento_titularActionPerformed
@@ -1088,7 +1085,7 @@ public final class modalAlquiler extends javax.swing.JInternalFrame {
         Dimension FrameSize = c.getSize();
         c.setLocation((desktopSize.width - FrameSize.width) / 2, (desktopSize.height - FrameSize.height) / 6);
         c.show();
-        c.mostrarTabla(cod_alquiler,"ver");
+        c.mostrarTabla(cod_alquiler, "ver",1000);
         // TODO add your handling code here:
     }//GEN-LAST:event_btnDetalleActionPerformed
 

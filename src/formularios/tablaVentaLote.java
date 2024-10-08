@@ -44,11 +44,12 @@ public final class tablaVentaLote extends javax.swing.JInternalFrame {
         DefaultTableModel modelo1 = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 6;
+                return column == 7;
             }
         };
         modelo1.addColumn("Número de Venta");
         modelo1.addColumn("Titular");
+        modelo1.addColumn("Documento");
         modelo1.addColumn("Numero Lote");
         modelo1.addColumn("Monto Entrega");
         modelo1.addColumn("Monto Cuota");
@@ -57,7 +58,7 @@ public final class tablaVentaLote extends javax.swing.JInternalFrame {
         tbl_ventaLote.setModel(modelo1);
         String sql = " WITH cliente_info AS (\n"
                 + "    SELECT a.cod_cabecera,\n"
-                + "           CONCAT(t.nombres, ' ', t.apellidos) AS cliente_nombre,\n"
+                + "           CONCAT(t.nombres, ' ', t.apellidos) AS cliente_nombre,t.documento,\n"
                 + "           CONCAT(m.codigo, '-', l.numero_lote, '-', l.serie) AS lote_numero,\n"
                 + "           TO_CHAR(a.entrega, 'FM999G999G999G990') AS entrega,\n"
                 + "           TO_CHAR(a.cuota, 'FM999G999G999G990') AS cuota,\n"
@@ -70,17 +71,17 @@ public final class tablaVentaLote extends javax.swing.JInternalFrame {
                 + ")\n"
                 + "SELECT * FROM cliente_info";
         if (!valor.equals("")) {
-            sql += " where cliente_nombre LIKE '%" + valor + "%' or lote_numero LIKE '%" + valor + "%'";
+            sql += " where cliente_nombre LIKE '%" + valor + "%' or lote_numero LIKE '%" + valor + "%' or documento LIKE '%" + valor + "%'";
         } else {
             sql += " order by cod_cabecera ASC";
         }
-        String[] datos = new String[6];
+        String[] datos = new String[7];
         try (Connection conn = DatabaseConnector.getConnection();
                 Statement st = conn.createStatement();
                 ResultSet rs = st.executeQuery(sql)) {
 
             while (rs.next()) {
-                for (int i = 0; i < 6; i++) {
+                for (int i = 0; i < 7; i++) {
                     datos[i] = rs.getString(i + 1);
                 }
                 modelo1.addRow(datos);
@@ -126,8 +127,8 @@ public final class tablaVentaLote extends javax.swing.JInternalFrame {
                     c.MostrarDatos("anulacion", Integer.parseInt(alquiler), "anular");
                 }
             };
-            tbl_ventaLote.getColumnModel().getColumn(6).setCellRenderer(new TablaAccionCeldaRender());
-            tbl_ventaLote.getColumnModel().getColumn(6).setCellEditor(new TablaAccionCeldaEditar(event));
+            tbl_ventaLote.getColumnModel().getColumn(7).setCellRenderer(new TablaAccionCeldaRender());
+            tbl_ventaLote.getColumnModel().getColumn(7).setCellEditor(new TablaAccionCeldaEditar(event));
             tbl_ventaLote.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
                 @Override
                 public Component getTableCellRendererComponent(JTable jtable, Object o, boolean bln, boolean bln1, int i, int i1) {
@@ -538,7 +539,7 @@ public final class tablaVentaLote extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_searchText1ActionPerformed
 
     private void searchText1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchText1KeyTyped
-        EventoTecladoUtil.permitirMayusculasYNumeros(evt);         // TODO add your handling code here:
+     EventoTecladoUtil.permitirMayusculasYNumerosEspacios(evt);         // TODO add your handling code here:
     }//GEN-LAST:event_searchText1KeyTyped
 
     private void nuevo2FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_nuevo2FocusGained

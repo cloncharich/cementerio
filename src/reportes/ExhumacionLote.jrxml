@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b8def469-1082-40b7-a773-f22c718057d5">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="alquiler" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    TO_CHAR(d.fecha_inserto, 'DD/MM/YYYY') AS fecha_insercion,
+    TO_CHAR(d.fecha_inserto, 'HH24:MI') AS hora_inserto, 
+    d.cod_difunto,
+    d.nombres,
+    d.documento,
+    TO_CHAR(d.fecha_fallecimiento, 'DD/MM/YYYY') AS fecha_muerte,
+    TO_CHAR(d.fecha_nacimiento, 'DD/MM/YYYY') AS fecha_nacimiento,
+    d.nacionalidad,
+    d.lugar_nacimiento,
+    d.nro_cer_defucion,
+    d.motivo_deceso,d.residencia,d.edad as edad_difunto,
+    CASE
+        WHEN d.sexo = 'M' THEN 'MASCULINO'
+        WHEN d.sexo = 'F' THEN 'FEMENINO'
+    END AS sexo,
+    CONCAT(l.numero_lote, '-', l.serie) AS numero_lote,
+	m.codigo as manzana, 
+    d.cod_alquiler,
+    cl.nombres || ' ' || cl.apellidos AS nombre_completo_cliente,
+    cl.documento as doc_cliente,
+    cl.celular,cl.fecha_nacimiento as fec_titular,cl.nacionalidad,cl.edad,cl.direccion,cl.ciudad,cl.barrio,cl.email,
+	cl.celular,cl.familiar_relacionado,telefono_familiar,cl.nacionalidad as nac_titular
+FROM 
+    difunto d
+INNER JOIN 
+    alquiler_lote_cliente al ON al.cod_cabecera = d.cod_alquiler
+INNER JOIN 
+    cliente cl ON cl.cod_cliente = al.cod_cliente
+INNER JOIN 
+    lote l ON l.cod_lote = al.cod_lote
+INNER JOIN
+    manzana m ON m.cod_manzana = l.cod_manzana
+where d.cod_difunto =$P{alquiler}]]>
+	</queryString>
+	<field name="fecha_insercion" class="java.lang.String"/>
+	<field name="hora_inserto" class="java.lang.String"/>
+	<field name="cod_difunto" class="java.lang.Integer"/>
+	<field name="nombres" class="java.lang.String"/>
+	<field name="documento" class="java.lang.String"/>
+	<field name="fecha_muerte" class="java.lang.String"/>
+	<field name="fecha_nacimiento" class="java.lang.String"/>
+	<field name="nacionalidad" class="java.lang.String"/>
+	<field name="lugar_nacimiento" class="java.lang.String"/>
+	<field name="nro_cer_defucion" class="java.lang.String"/>
+	<field name="motivo_deceso" class="java.lang.String"/>
+	<field name="residencia" class="java.lang.String"/>
+	<field name="edad_difunto" class="java.lang.Integer"/>
+	<field name="sexo" class="java.lang.String"/>
+	<field name="numero_lote" class="java.lang.String"/>
+	<field name="manzana" class="java.lang.String"/>
+	<field name="cod_alquiler" class="java.lang.Integer"/>
+	<field name="nombre_completo_cliente" class="java.lang.String"/>
+	<field name="doc_cliente" class="java.lang.String"/>
+	<field name="celular" class="java.lang.String"/>
+	<field name="fec_titular" class="java.sql.Date"/>
+	<field name="edad" class="java.lang.Integer"/>
+	<field name="direccion" class="java.lang.String"/>
+	<field name="ciudad" class="java.lang.String"/>
+	<field name="barrio" class="java.lang.String"/>
+	<field name="email" class="java.lang.String"/>
+	<field name="familiar_relacionado" class="java.lang.String"/>
+	<field name="telefono_familiar" class="java.lang.String"/>
+	<field name="nac_titular" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="802" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="16" width="555" height="20" uuid="8be3e9ba-dd70-4608-80eb-02a8d5f6a404"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[NOTA DE SOLICITUD DE EXHUMACIÓN DEL LOTE / PARCELA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="72" width="555" height="20" uuid="276d93b9-76db-409d-b925-9e83c0478a80"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sres. Propietarios Presentes:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="92" width="552" height="74" uuid="5279acec-688b-4250-b0f0-82714d85bb87"/>
+				<textElement verticalAlignment="Top">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[Por este medio notifico la exhumación del féretro de quien en vida fuera su…………………………………….; ……………………………………………………………………, fallecido/a en fecha,……………………….., que actualmente se encuentra depositado en el Panteón/parcela ……..,……… del “Cementerio Santa Librada”, ubicado en la ciudad de Limpio, al Cementerio…………………………………………………………………………….Lote Nº………………Manzana Nº…………….]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="6" y="166" width="208" height="20" uuid="92177e81-7dac-4c99-9475-93ed14d5a57d"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha de Exhumación del Panteón/parcela ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="7" y="196" width="181" height="20" uuid="02fab3a2-51ff-4247-9151-3137a8ed3c6c"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hora de Exhumación(Aproximada):]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="234" width="181" height="20" uuid="0376bc05-f85a-425d-8985-34422a5c801f"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATOS DEL TITULAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="254" width="107" height="20" uuid="fad0d52b-18e7-4512-a795-022066f62f30"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombres y Apellidos:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="384" y="254" width="73" height="20" uuid="8542a9ed-db3a-4c0e-b255-bf00403fd4a6"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nacionalidad:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="274" width="36" height="20" uuid="d4b057d6-a0fb-4bbd-8d72-beec98e54d51"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[C.I.N°]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="181" y="274" width="93" height="20" uuid="3728cf93-cef3-420c-8696-7be9ea406999"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Nacimiento:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="384" y="274" width="107" height="20" uuid="013f52be-83d0-4b62-84cb-799c7529e502"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Edad:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="294" width="107" height="20" uuid="33f85f25-06bb-4f74-a6eb-57d0925fdc70"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dirección Particular:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="314" width="107" height="20" uuid="f5e20225-a3bd-40e8-8649-4ad55343fd08"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ciudad:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="181" y="314" width="107" height="20" uuid="3d2468c6-30ed-4f0e-b177-c1aefb5cd69e"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Barrio:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="384" y="314" width="40" height="20" uuid="039f7083-66a0-426a-93d1-d3010bae3210"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[E-mail:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="334" width="93" height="20" uuid="6019adec-533f-4761-949b-166ad9f1b4a2"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Celular:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="181" y="334" width="93" height="20" uuid="764d6792-6f46-4963-8342-1f44d0b1594c"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Manzana:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="384" y="334" width="93" height="20" uuid="24a733d4-29dd-4629-b183-af26cee315be"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Lote:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="376" width="181" height="20" uuid="ec614094-74f0-4b88-a227-d9c276ef669a"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATOS DEL DIFUNTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="399" width="93" height="20" uuid="e906094a-5af6-41b7-93d1-7e0061fa3f6c"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre Completo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="419" width="181" height="20" uuid="d0ea3009-7321-4071-abc7-8ea43a451718"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[N° Certificado de Acta de Defunción:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="367" y="419" width="36" height="20" uuid="578faba5-a10e-4bd1-9514-3beca9c7a9a5"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[C.I.N°]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="439" width="151" height="20" uuid="213f941f-a1cf-4cad-8753-d7894d788fd4"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Lugar de Nacimiento (Ciudad):]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="306" y="439" width="93" height="20" uuid="c2b2ad89-cfdc-4181-b61f-85330eb80cc4"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Nacimiento:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="459" width="151" height="20" uuid="4cf18c13-a7f2-47f9-a2ae-c8fa29316bc2"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ciudad de Residencia:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="306" y="459" width="100" height="20" uuid="3bf9c8ef-f010-47a2-8fdd-be6e1da1bdac"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Fallecimiento:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="479" width="151" height="20" uuid="5da11abb-6a76-4092-bee4-62690b53322b"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Motivo de desceso:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="306" y="479" width="93" height="20" uuid="86c5f0ae-4531-4079-b070-ee1ed0b2aaba"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Edad del Difunto:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="534" width="555" height="20" uuid="34db640f-7548-436f-a232-07abf0ecb769"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ESTOY EN CONOCIMIENTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="22" y="555" width="515" height="149" uuid="66b9141d-2bae-46fb-b515-9ddd229c4bee"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Cementerio Privado Santa Librada se reserva el derecho de admisión y de dar de baja al particular que quede demostrado que falsificó datos en los comprobantes. En el momento de acceder al panteón/ parcela se deberá abonar por la exhumación y estar al día con el mantenimiento correspondiente, requisitos sin los cuales no se procederá a la apertura de la fosa.
+Las exhumaciones podrán realizarse dentro de los horarios fijados por LA EMPRESA y en ningún caso podrán coincidir con los horarios de visitas.
+Los restos reducidos podrán colocarse en los espacios que LA EMPRESA  provea para tal fin o darles destinos que establezcan los familiares
+La apertura de sepulturas realizadas en tierra sólo podrá realizarse cuando hayan transcurrido cinco años desde la inhumación. Solo se podrá abrir en términos menores mediando orden judicial.
+ Requisitos para exhumar:
+	1-Presentación de Solicitud
+	2-Las autorizaciones correspondientes (municipales)
+	3-Presentación de los comprobantes de todas las obligaciones al día
+	4-Pagos de las tarifas vigentes más los derechos municipales si los restos salieran del cementerio
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="188" y="773" width="185" height="20" uuid="e392d853-c618-4b90-bbd4-1a61d0af8b97"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Firma,aclaración y C.I. TITULAR]]></text>
+			</staticText>
+			<line>
+				<reportElement x="188" y="769" width="185" height="1" uuid="5a2ef66e-7fd7-434b-958d-3e573ed06de8"/>
+			</line>
+			<line>
+				<reportElement x="1" y="394" width="131" height="1" uuid="823b8ad1-2a65-42bc-b149-e5921501975c"/>
+				<graphicElement>
+					<pen lineWidth="2.0"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="1" y="252" width="131" height="1" uuid="f60037ff-cde8-473a-b855-b7263fc53b0a"/>
+				<graphicElement>
+					<pen lineWidth="2.0"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="93" y="399" width="448" height="20" uuid="06fa2373-7301-46e6-aff3-982ca6186df4"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombres}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="406" y="419" width="149" height="20" uuid="e714af94-d16b-4002-adee-3ef0598e1274"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{documento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="406" y="459" width="149" height="20" uuid="b5de0dcf-06a1-4598-a400-acfd958e896e"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_muerte}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="406" y="439" width="149" height="20" uuid="0589368c-19ed-4cd2-9ca4-304648e496be"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_nacimiento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="147" y="439" width="155" height="20" uuid="dc4bd15e-4d48-4af5-ae27-f250a6f1b2aa"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{lugar_nacimiento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="177" y="419" width="186" height="20" uuid="3ab15f55-5eba-4ee6-a2e7-e2cd92c3bc08"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nro_cer_defucion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="107" y="479" width="184" height="20" uuid="bcd7136a-b5c5-4a04-9ed8-ead9b2dc5b55"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{motivo_deceso}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="420" y="334" width="132" height="20" uuid="6b30d5c4-d6ce-4733-a96c-bf95d800341d"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numero_lote}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="233" y="334" width="151" height="20" uuid="6b94c906-e77b-4847-b467-ef5944d72649"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{manzana}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="107" y="254" width="277" height="20" isPrintWhenDetailOverflows="true" uuid="93bab8c9-e111-465d-9830-ad8a0d0f18f8"/>
+				<box>
+					<pen lineStyle="Dashed"/>
+					<topPen lineStyle="Dashed"/>
+					<leftPen lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+					<rightPen lineStyle="Dashed"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_completo_cliente}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="45" y="334" width="131" height="20" uuid="02f19d5e-1344-430b-ae82-d03a1c1cd52e"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{celular}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="32" y="274" width="144" height="20" uuid="a804d70b-3f49-4403-8b3a-2a2a15672522"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_cliente}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="45" y="314" width="131" height="20" uuid="75f64f00-a638-4d51-a712-afe7c99d064a"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ciudad}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="107" y="294" width="442" height="20" uuid="c18bee01-6b5b-4a2a-8ecd-ce3d85fdb045"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{direccion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="413" y="274" width="139" height="20" uuid="4b80e790-0fd3-4ab6-a138-8f01fcc2d3fb"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{edad}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="216" y="314" width="157" height="20" uuid="038eccc9-2a6a-4578-b829-5203d861e9a4"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{barrio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="420" y="314" width="136" height="20" uuid="d22cc099-faf2-47e0-a8fc-f9c46c08efe4"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{email}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="452" y="254" width="100" height="20" uuid="9db68d36-d88e-41af-b183-8d16c39438c4"/>
+				<box>
+					<pen lineStyle="Dashed"/>
+					<topPen lineStyle="Dashed"/>
+					<leftPen lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dashed"/>
+					<rightPen lineStyle="Dashed"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nac_titular}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="274" y="274" width="100" height="20" uuid="31fb7456-2dc4-4e08-9c8d-19781b05aea3"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{fec_titular}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="6" y="1" width="87" height="61" uuid="59d90901-fc6a-4183-989d-f7396d1e550c"/>
+				<imageExpression><![CDATA[getClass().getResource("/imagenes/logoReport.png")]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="147" y="459" width="155" height="20" uuid="b5a5c5b2-d4d9-4cb9-a072-5ae1d0882b12"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{residencia}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="406" y="479" width="143" height="20" uuid="51752a7e-fda2-400a-a789-39859114e960"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{edad_difunto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="358" y="103" width="86" height="15" uuid="9c8838f5-f0a9-46d4-b3f7-c99621d1840e"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha_muerte}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="16" y="141" width="29" height="14" uuid="d9556bd4-6a7b-4fe1-b16b-b91406ecce49"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{manzana}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="201" y="117" width="18" height="14" uuid="42e2916f-c5a3-473b-8871-b07e7f574703"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{manzana}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="229" y="117" width="23" height="14" uuid="1a7c6c6d-0675-4808-a5d2-02991c44458d"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numero_lote}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="397" y="129" width="23" height="14" uuid="33375f0c-fd05-4fe4-bcac-a4f19b64c946"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numero_lote}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="214" y="166" width="100" height="20" uuid="198dbaf0-f840-409d-9e7d-9f0e5795803e"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH.mm">
+				<reportElement x="214" y="196" width="100" height="20" uuid="bd9bfe0b-6abf-4d24-b831-b6d5fa5d230b"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+</jasperReport>
